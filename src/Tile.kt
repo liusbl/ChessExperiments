@@ -1,0 +1,1 @@
+data class Tile(val location: Location, val piece: Piece)
