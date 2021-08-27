@@ -1,5 +1,4 @@
 import Piece.Color
-import Piece.King
 
 private const val SIZE = 4
 
@@ -9,13 +8,17 @@ fun main() {
 
     val allPieceCombinationBoardList = createAllPieceBoards(
         SIZE, listOf(
-            King(Color.WHITE),
-            King(Color.BLACK),
+            Piece.King(Color.WHITE),
+            Piece.King(Color.BLACK),
             Piece.Queen(Color.WHITE)
         )
     )
 
-    allPieceCombinationBoardList.forEach(Board::print)
+    allPieceCombinationBoardList.forEach {
+        println(it.generateFen())
+        it.print()
+        println()
+    }
 
     println("All piece combination board list size: ${allPieceCombinationBoardList.size}")
 }

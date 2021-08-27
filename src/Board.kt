@@ -28,3 +28,31 @@ fun Board.print() {
         }
     println()
 }
+
+fun Board.generateFen(): String {
+    var result = ""
+    tileList.chunked(size)
+        .forEach { row ->
+            var emptyCount = 0
+            row.forEach { tile ->
+                if (tile.piece is Piece.Empty) {
+                    emptyCount++
+                } else {
+                    result += if (emptyCount == 0) {
+                        "${tile.piece}"
+                    } else {
+                        "${emptyCount}${tile.piece}".also {
+                            emptyCount = 0
+                        }
+                    }
+                }
+            }
+            result += if (emptyCount != 0) {
+                "$emptyCount/"
+            } else {
+                "/"
+            }
+        }
+    result = result.dropLast(1)
+    return result
+}
