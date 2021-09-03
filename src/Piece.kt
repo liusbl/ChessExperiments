@@ -6,9 +6,15 @@ sealed class Piece(
 
     object Empty : Piece('-', Movement.None)
 
-    class King(color: Color) : Piece(if (color == Color.WHITE) 'K' else 'k', Movement.None)
+    class King(color: Color) : Piece(
+        if (color == Color.WHITE) 'K' else 'k',
+        Movement.Basic(Movement.Basic.Distance.ONE, Movement.Basic.Direction.ORTHOGONAL_AND_DIAGONAL)
+    )
 
-    class Queen(color: Color) : Piece(if (color == Color.WHITE) 'Q' else 'q', Movement.None)
+    class Queen(color: Color) : Piece(
+        if (color == Color.WHITE) 'Q' else 'q',
+        Movement.Basic(Movement.Basic.Distance.N, Movement.Basic.Direction.ORTHOGONAL_AND_DIAGONAL)
+    )
 
     class Rook(color: Color) : Piece(if (color == Color.WHITE) 'R' else 'r', Movement.None)
 
