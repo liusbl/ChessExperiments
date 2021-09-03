@@ -10,7 +10,7 @@ fun main() {
         SIZE, listOf(
             Piece.King(Color.WHITE),
             Piece.King(Color.BLACK),
-            Piece.Queen(Color.WHITE)
+            Piece.Queen(Color.WHITE),
         )
     )
 
