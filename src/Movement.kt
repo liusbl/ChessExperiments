@@ -5,7 +5,6 @@
  *
  * Distances:
  *  1 –> a distance of one (i.e. to adjacent square)
- *  2 –> a distance of two
  *  n –> any distance in the given direction
  *
  * Directions:
@@ -21,7 +20,6 @@ sealed class Movement {
     data class Basic(val distance: Distance, val direction: Direction) : Movement() {
         enum class Distance {
             ONE,
-            TWO,
             N
         }
 
