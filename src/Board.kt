@@ -1,4 +1,9 @@
-data class Board(val size: Int, val tileList: List<Tile>, val move: Move) {
+data class Board(
+    val size: Int,
+    val tileList: List<Tile>,
+    val move: Move,
+    val legality: Legality
+) {
     companion object {
         fun createEmpty(size: Int): Board {
             val rowList = (0 until size).map { tileX ->
@@ -6,16 +11,9 @@ data class Board(val size: Int, val tileList: List<Tile>, val move: Move) {
                     Tile(Location(tileX, tileY), Piece.Empty)
                 }
             }.flatten()
-            return Board(size, rowList, Move.WHITE)
+            return Board(size, rowList, Move.WHITE, Legality.Legal)
         }
     }
-}
-
-fun Board.update(newTile: Tile): Board {
-    val tileList = tileList.toMutableList()
-    val index = tileList.indexOfFirst { tile -> tile.location == newTile.location }
-    tileList[index] = newTile
-    return Board(size, tileList, this.move)
 }
 
 fun Board.print() {

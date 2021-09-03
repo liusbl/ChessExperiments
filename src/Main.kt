@@ -42,7 +42,7 @@ private fun createAllPieceBoards(size: Int, pieces: List<Piece>): List<Board> {
                 } else {
                     Tile(emptyTile.location, Piece.Empty)
                 }
-            }, Move.WHITE)
+            }, Move.WHITE, Legality.Legal)
         }
     }
 
@@ -56,7 +56,10 @@ private fun createAllPieceBoards(size: Int, pieces: List<Piece>): List<Board> {
                         oldTile
                     }
                 }
-                listOf(Board(size, updatedTileList, Move.WHITE), Board(size, updatedTileList, Move.BLACK))
+                listOf(
+                    Board(size, updatedTileList, Move.WHITE, Legality.Legal),
+                    Board(size, updatedTileList, Move.BLACK, Legality.Legal)
+                )
             }
         }
     }
