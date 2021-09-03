@@ -25,10 +25,32 @@ sealed class Movement {
             N
         }
 
-        enum class Direction {
-            ANY_ORTHOGONAL,
-            ANY_DIAGONAL,
-            ORTHOGONAL_AND_DIAGONAL
+        sealed interface Direction {
+            fun getNextLocationList(location: Location): List<Location>
+
+            object AnyOrthogonal : Direction {
+                override fun getNextLocationList(location: Location) = listOf(
+                    location.copy(x = location.x + 1),
+                    location.copy(x = location.x - 1),
+                    location.copy(y = location.y + 1),
+                    location.copy(y = location.y - 1),
+                )
+            }
+
+            object AnyDiagonal : Direction {
+                override fun getNextLocationList(location: Location) = listOf(
+                    location.copy(x = location.x + 1, y = location.y + 1),
+                    location.copy(x = location.x - 1, y = location.y + 1),
+                    location.copy(x = location.x + 1, y = location.y - 1),
+                    location.copy(x = location.x - 1, y = location.y - 1),
+                )
+            }
+
+            object OrthogonalAndDiagonal : Direction {
+                override fun getNextLocationList(location: Location) =
+                    AnyOrthogonal.getNextLocationList(location) +
+                            AnyDiagonal.getNextLocationList(location)
+            }
         }
     }
 }
