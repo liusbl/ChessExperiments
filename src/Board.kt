@@ -31,9 +31,16 @@ fun Board.print() {
 
 /**
  * FEN customizations:
- * Since generate all possible combinations, there are some boards that are impossible to achieve.
+ * Since generate all possible combinations,
+ * there are some illegal positions.
  *
- * This is the notation:
+ * This is the notation for illegal position:
+ * 1. Two kings near to each other - K
+ * 2. Side that is making a check has the next move - C
+ *
+ * Something to note - more then once of these can be at the same time
+ *
+ * Illegal position notation is added to the end after a space.
  */
 fun Board.generateFen(): String {
     var result = ""
