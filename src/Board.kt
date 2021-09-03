@@ -35,6 +35,7 @@ fun Board.print() {
  * there are some illegal positions.
  *
  * This is the notation for illegal position:
+ * 0. Legal position - L
  * 1. Two kings near to each other - K
  * 2. Side that is making a check has the next move - C
  *
