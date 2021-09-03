@@ -40,6 +40,8 @@ fun Board.print() {
  * Something to note - more then once of these can be at the same time
  *
  * Illegal position notation is added to the end after a space.
+ *
+ * TODO perhaps add illegal positions for too many or too little kings.
  */
 fun Board.generateFen(): String {
     var result = ""
