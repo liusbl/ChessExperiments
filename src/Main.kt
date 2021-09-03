@@ -3,13 +3,13 @@ import Piece.Color
 private const val SIZE = 4
 
 fun main(args: Array<String>) {
-    if (args.isEmpty()) {
-        // TODO
-    }
-
-    if (args[0] == "generate") {
-        // TODO
-    }
+//    if (args.isEmpty()) {
+//        // TODO
+//    }
+//
+//    if (args[0] == "generate") {
+//        // TODO
+//    }
 
     println("Starting")
     println()
@@ -42,22 +42,23 @@ private fun createAllPieceBoards(size: Int, pieces: List<Piece>): List<Board> {
                 } else {
                     Tile(emptyTile.location, Piece.Empty)
                 }
-            })
+            }, Move.WHITE)
         }
     }
 
     val result = singlePieceBoards.reduce { acc, next ->
-        acc.map { combinedBoard ->
-            next.map { nextBoard ->
-                Board(size, combinedBoard.tileList.zip(nextBoard.tileList) { oldTile, nextTile ->
+        acc.flatMap { combinedBoard ->
+            next.flatMap { nextBoard ->
+                val updatedTileList = combinedBoard.tileList.zip(nextBoard.tileList) { oldTile, nextTile ->
                     if (oldTile.piece == Piece.Empty) {
                         oldTile.copy(piece = nextTile.piece)
                     } else {
                         oldTile
                     }
-                })
+                }
+                listOf(Board(size, updatedTileList, Move.WHITE), Board(size, updatedTileList, Move.BLACK))
             }
-        }.flatten()
+        }
     }
 
     return result.filter { board -> board.tileList.count { tile -> tile.piece != Piece.Empty } == pieces.size }
