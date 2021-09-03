@@ -2,7 +2,15 @@ import Piece.Color
 
 private const val SIZE = 4
 
-fun main() {
+fun main(args: Array<String>) {
+    if (args.isEmpty()) {
+        // TODO
+    }
+
+    if (args[0] == "generate") {
+        // TODO
+    }
+
     println("Starting")
     println()
 
