@@ -8,12 +8,12 @@ sealed class Piece(
 
     class King(color: Color) : Piece(
         if (color == Color.WHITE) 'K' else 'k',
-        Movement.Basic(Movement.Basic.Distance.ONE, Movement.Basic.Direction.ORTHOGONAL_AND_DIAGONAL)
+        Movement.Basic(Movement.Basic.Distance.ONE, Movement.Basic.Direction.OrthogonalAndDiagonal)
     )
 
     class Queen(color: Color) : Piece(
         if (color == Color.WHITE) 'Q' else 'q',
-        Movement.Basic(Movement.Basic.Distance.N, Movement.Basic.Direction.ORTHOGONAL_AND_DIAGONAL)
+        Movement.Basic(Movement.Basic.Distance.N, Movement.Basic.Direction.OrthogonalAndDiagonal)
     )
 
     class Rook(color: Color) : Piece(if (color == Color.WHITE) 'R' else 'r', Movement.None)
