@@ -16,16 +16,10 @@ data class Board(
     }
 }
 
-fun Board.print() {
-    tileList.chunked(size)
-        .forEach { row ->
-            row.forEach { tile ->
-                print(tile.piece)
-            }
-            println()
-        }
-    println()
-}
+fun Board.getPrintableBoard() = tileList.chunked(size)
+    .joinToString(separator = "") { row ->
+        row.joinToString(separator = "", postfix = "\n", transform = { tile -> tile.piece.letter.toString() })
+    }
 
 /**
  * FEN customizations:

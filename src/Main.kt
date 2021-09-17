@@ -24,7 +24,7 @@ fun main(args: Array<String>) {
 
     allPieceCombinationBoardList.forEach {
         println(it.getFen())
-        it.print()
+        println(it.getPrintableBoard())
         println()
     }
 
