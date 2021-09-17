@@ -43,7 +43,7 @@ fun Board.print() {
  *
  * TODO perhaps add illegal positions for too many or too little kings.
  */
-fun Board.generateFen(): String {
+fun Board.getFen(): String {
     var result = ""
     tileList.chunked(size)
         .forEach { row ->

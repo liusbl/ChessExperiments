@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
     )
 
     allPieceCombinationBoardList.forEach {
-        println(it.generateFen())
+        println(it.getFen())
         it.print()
         println()
     }
