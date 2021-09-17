@@ -2,7 +2,8 @@ data class Board(
     val size: Int,
     val tileList: List<Tile>,
     val move: Move,
-    val legality: Legality
+    val legality: Legality,
+    val nextBoardList: List<Board>
 ) {
     companion object {
         fun createEmpty(size: Int): Board {
@@ -11,7 +12,7 @@ data class Board(
                     Tile(Location(tileX, tileY), Piece.Empty)
                 }
             }.flatten()
-            return Board(size, rowList, Move.WHITE, Legality.Legal)
+            return Board(size, rowList, Move.WHITE, Legality.Legal, listOf())
         }
     }
 }

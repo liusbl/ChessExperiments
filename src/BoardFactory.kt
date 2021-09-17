@@ -10,7 +10,7 @@ object BoardFactory {
                     } else {
                         Tile(emptyTile.location, Piece.Empty)
                     }
-                }, Move.WHITE, Legality.Legal)
+                }, Move.WHITE, Legality.Legal, listOf())
             }
         }
 
@@ -25,8 +25,8 @@ object BoardFactory {
                         }
                     }
                     listOf(
-                        Board(size, updatedTileList, Move.WHITE, Legality.Legal),
-                        Board(size, updatedTileList, Move.BLACK, Legality.Legal)
+                        Board(size, updatedTileList, Move.WHITE, Legality.Legal, listOf()),
+                        Board(size, updatedTileList, Move.BLACK, Legality.Legal, listOf())
                     )
                 }
             }
