@@ -33,8 +33,8 @@ sealed interface Movement {
                     }
                     is Direction.OrthogonalAndDiagonal -> {
                         direction.getNextLocationList(tile.location)
-                            .filter { location -> location.x < 0 || location.y < 0 }
-                            .filter { location -> location.x >= board.size || location.y >= board.size }
+                            .filter { location -> location.x >= 0 && location.y >= 0 }
+                            .filter { location -> location.x < board.size && location.y < board.size }
                             .filter { location ->
                                 val piece = board.tileList.find { tile.location == location }?.piece ?: return@filter true
                                 piece == Piece.Empty || tile.piece.color != piece.color
