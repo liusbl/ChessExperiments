@@ -24,9 +24,20 @@ object BoardFactory {
                             oldTile
                         }
                     }
+
+                    val board1 = Board(size, updatedTileList, Move.WHITE, Legality.Legal, listOf())
+                    val a = board1.tileList.flatMap { tile ->
+                        tile.piece.movement.getNextBoardList(tile, board1)
+                    }
+
+                    val board2 = Board(size, updatedTileList, Move.BLACK, Legality.Legal, listOf())
+                    val b = board2.tileList.flatMap { tile ->
+                        tile.piece.movement.getNextBoardList(tile, board2)
+                    }
+
                     listOf(
-                        Board(size, updatedTileList, Move.WHITE, Legality.Legal, listOf()),
-                        Board(size, updatedTileList, Move.BLACK, Legality.Legal, listOf())
+                        board1.copy(nextBoardList = a),
+                        board2.copy(nextBoardList = b)
                     )
                 }
             }

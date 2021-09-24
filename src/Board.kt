@@ -5,6 +5,8 @@ data class Board(
     val legality: Legality,
     val nextBoardList: List<Board>
 ) {
+    override fun toString() = "\n" + this.getPrintableBoard()
+
     companion object {
         fun createEmpty(size: Int): Board {
             val rowList = (0 until size).map { tileX ->
@@ -65,5 +67,6 @@ fun Board.getFen(): String {
     result = result.dropLast(1)
     result += " ${move.letter}"
     result += " $legality"
+    result += " $nextBoardList"
     return result
 }
