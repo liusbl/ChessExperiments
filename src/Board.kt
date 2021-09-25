@@ -67,6 +67,6 @@ fun Board.getFen(): String {
     result = result.dropLast(1)
     result += " ${move.letter}"
     result += " $legality"
-//    result += " $nextBoardList"
+    result += " $nextBoardList"
     return result
 }
