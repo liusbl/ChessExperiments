@@ -46,28 +46,6 @@ sealed interface Board {
 
         override fun toString() = "\n" + this.getPrintableBoard()
 
-        /**
-         * FEN customizations:
-         *
-         * Check will be denoted by a plus and color in check: +w or +b
-         * Checkmate will be denoted by a hashtag and color in checkmate: #w or #b
-         *
-         * -------
-         *
-         * Since generate all possible combinations,
-         * there are some illegal positions.
-         *
-         * This is the notation for illegal position:
-         * 0. Legal position - L
-         * 1. Two kings near to each other - K
-         * 2. Side that is making a check has the next move - C
-         *
-         * Something to note - more then once of these can be at the same time
-         *
-         * Illegal position notation is added to the end after a space.
-         *
-         * TODO perhaps add illegal positions for too many or too little kings.
-         */
         fun Board.getFen(): String {
             var result = ""
             tileList.chunked(size)
