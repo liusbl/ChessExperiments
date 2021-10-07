@@ -1,4 +1,5 @@
 import Piece.*
+import java.io.File
 
 /**
  * Process of generation:
@@ -12,7 +13,6 @@ import Piece.*
 fun main() {
     println("Starting")
     val emptyBoard = createEmptyBoard(4)
-    println(emptyBoard.getPrintableBoard())
 
     val singlePieceBoardList = createAllSinglePieceBoardList(
         emptyBoard,
@@ -22,7 +22,6 @@ fun main() {
             Queen(Color.WHITE),
         )
     )
-    println(singlePieceBoardList)
 
     val allCombinedPieceBoardList = combineAllSinglePieceBoardList(singlePieceBoardList)
 
@@ -33,6 +32,10 @@ fun main() {
     val final = filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList)
 
     val finalized = finalizeIndexes(final)
+
+    val fin = finalized.map(BoardFenMapper::getFen)
+
+    File("out.txt").writeText(fin.joinToString(separator = "\n"))
 
     println("Finished")
 }

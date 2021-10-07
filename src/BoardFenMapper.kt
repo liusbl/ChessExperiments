@@ -81,26 +81,27 @@ object BoardFenMapper {
                 }
             }
         result = result.dropLast(1)
-//            result += " ${move.letter}"
-//        result += " $legality"
-//            result += " $nextBoardList"
+        result += " ${board.witMoveBoard.move.letter}"
+        result += "~"
+        result += "${board.index}"
+        result += ","
+        result += "${board.legality.letterList[0]}"
+        if (board is Board.Final.LegalFinalV2) {
+            result += ","
+            result += board.checkState.notation
+            result += ";"
+            board.nextBoardIndexes.forEach { index ->
+                result += "$index"
+                result += ","
+            }
+            if (board.nextBoardIndexes.isNotEmpty()) {
+                result = result.dropLast(1)
+            }
+        }
         return result
     }
 
     fun getBoard(fen: String): Board {
         return TODO()
     }
-}
-
-// For testing purposes
-fun main() {
-//    val emptyBoard = createEmptyBoard(4)
-//    val tileList = emptyBoard.tileList.toMutableList().run {
-//        set(1, get(1).copy(piece = Piece.King(Piece.Color.BLACK)))
-//        set(3, get(3).copy(piece = Piece.King(Piece.Color.WHITE)))
-//        set(12, get(12).copy(piece = Piece.Queen(Piece.Color.WHITE)))
-//    }
-//
-//
-//    BoardFenMapper.getFen()
 }
