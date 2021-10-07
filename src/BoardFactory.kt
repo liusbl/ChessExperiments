@@ -213,73 +213,75 @@ private fun getNextPossibleBoards(
     queen: Tile,
     possibleWhiteKingTiles: List<Tile>,
     whiteKing: Tile
-) = if (legalBoard.withMoveBoard.move == Move.BLACK) {
-    // Create nextBoardList
-    //  White King's nextBoardList:
-    val nextBlackKingBoardList = possibleBlackKingTiles
-        .map { tile ->
-            val tileList = legalBoard.tileList
-            val replacingTileIndex = tileList.indexOfFirst { tile.location == it.location }
-            val blackKingTileIndex = tileList.indexOf(blackKing)
-            val newTileList = tileList.toMutableList()
-                .apply {
-                    set(
-                        replacingTileIndex,
-                        tile.copy(location = tileList[replacingTileIndex].location, piece = blackKing.piece)
-                    )
-                    set(blackKingTileIndex, tile.copy(location = tileList[blackKingTileIndex].location, piece = Empty))
-                }
-                .toList()
-            newTileList
-        }
-        .filter { newTileList -> newTileList.count { tile -> tile.piece is King } == 2 }
-        .map { newTileList ->
-            Board.WithMove(Board.Partial(legalBoard.size, newTileList), move = Move.WHITE)
-        }
+): Board.Final.Legal {
+    return if (legalBoard.withMoveBoard.move == Move.BLACK) {
+        // Create nextBoardList
+        //  White King's nextBoardList:
+        val nextBlackKingBoardList = possibleBlackKingTiles
+            .map { tile ->
+                val tileList = legalBoard.tileList
+                val replacingTileIndex = tileList.indexOfFirst { tile.location == it.location }
+                val blackKingTileIndex = tileList.indexOf(blackKing)
+                val newTileList = tileList.toMutableList()
+                    .apply {
+                        set(
+                            replacingTileIndex,
+                            tile.copy(location = tileList[replacingTileIndex].location, piece = blackKing.piece)
+                        )
+                        set(blackKingTileIndex, tile.copy(location = tileList[blackKingTileIndex].location, piece = Empty))
+                    }
+                    .toList()
+                newTileList
+            }
+            .filter { newTileList -> newTileList.count { tile -> tile.piece is King } == 2 }
+            .map { newTileList ->
+                Board.WithMove(Board.Partial(legalBoard.size, newTileList), move = Move.WHITE)
+            }
 
-    legalBoard.copy(nextBoardList = nextBlackKingBoardList)
-} else {
-    // Create nextBoardList
-    //  Queen's nextBoardList:
-    val nextQueenBoardList = possibleQueenTiles
-        .map { tile ->
-            val tileList = legalBoard.tileList
-            val replacingTileIndex = tileList.indexOfFirst { tile.location == it.location }
-            val queenTileIndex = tileList.indexOf(queen)
-            val newTileList = tileList.toMutableList()
-                .apply {
-                    set(replacingTileIndex, tile.copy(piece = queen.piece))
-                    set(queenTileIndex, tile.copy(piece = Empty))
-                }
-                .toList()
-            newTileList
-        }
-        .filter { newTileList -> newTileList.count { tile -> tile.piece is King } == 2 }
-        .map { newTileList ->
-            Board.WithMove(Board.Partial(legalBoard.size, newTileList), move = Move.BLACK)
-        }
+        legalBoard.copy(nextBoardList = nextBlackKingBoardList)
+    } else {
+        // Create nextBoardList
+        //  Queen's nextBoardList:
+        val nextQueenBoardList = possibleQueenTiles
+            .map { tile ->
+                val tileList = legalBoard.tileList
+                val replacingTileIndex = tileList.indexOfFirst { tile.location == it.location }
+                val queenTileIndex = tileList.indexOf(queen)
+                val newTileList = tileList.toMutableList()
+                    .apply {
+                        set(replacingTileIndex, tile.copy(piece = queen.piece))
+                        set(queenTileIndex, tile.copy(piece = Empty))
+                    }
+                    .toList()
+                newTileList
+            }
+            .filter { newTileList -> newTileList.count { tile -> tile.piece is King } == 2 }
+            .map { newTileList ->
+                Board.WithMove(Board.Partial(legalBoard.size, newTileList), move = Move.BLACK)
+            }
 
-    // Create nextBoardList
-    //  White King's nextBoardList:
-    val nextWhiteKingBoardList = possibleWhiteKingTiles
-        .map { tile ->
-            val tileList = legalBoard.tileList
-            val replacingTileIndex = tileList.indexOfFirst { tile.location == it.location }
-            val whiteKingTileIndex = tileList.indexOf(whiteKing)
-            val newTileList = tileList.toMutableList()
-                .apply {
-                    set(replacingTileIndex, tile.copy(piece = whiteKing.piece))
-                    set(whiteKingTileIndex, tile.copy(piece = Empty))
-                }
-                .toList()
-            newTileList
-        }
-        .filter { newTileList -> newTileList.count { tile -> tile.piece is King } == 2 }
-        .map { newTileList ->
-            Board.WithMove(Board.Partial(legalBoard.size, newTileList), move = Move.BLACK)
-        }
+        // Create nextBoardList
+        //  White King's nextBoardList:
+        val nextWhiteKingBoardList = possibleWhiteKingTiles
+            .map { tile ->
+                val tileList = legalBoard.tileList
+                val replacingTileIndex = tileList.indexOfFirst { tile.location == it.location }
+                val whiteKingTileIndex = tileList.indexOf(whiteKing)
+                val newTileList = tileList.toMutableList()
+                    .apply {
+                        set(replacingTileIndex, tile.copy(piece = whiteKing.piece))
+                        set(whiteKingTileIndex, tile.copy(piece = Empty))
+                    }
+                    .toList()
+                newTileList
+            }
+            .filter { newTileList -> newTileList.count { tile -> tile.piece is King } == 2 }
+            .map { newTileList ->
+                Board.WithMove(Board.Partial(legalBoard.size, newTileList), move = Move.BLACK)
+            }
 
-    legalBoard.copy(nextBoardList = nextQueenBoardList + nextWhiteKingBoardList)
+        legalBoard.copy(nextBoardList = nextQueenBoardList + nextWhiteKingBoardList)
+    }
 }
 
 private fun possibleKingTiles(king: Tile, board: Board.WithMove): List<Tile> {
