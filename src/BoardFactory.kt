@@ -30,8 +30,28 @@ fun main() {
 
     val boardListWithIllegalNextBoardList = createWithIllegalNextBoardList(allCombinedPieceBoardListWithMoves)
 
+    val final = filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList)
+
+    val finalOnlyLegal = final.filterIsInstance<Board.Final.Legal>()
+
     println("Finished")
 }
+
+private fun filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList: List<Board.Final>) =
+    boardListWithIllegalNextBoardList.map { board ->
+        if (board !is Board.Final.Legal) return@map board
+
+        val onlyLegalNextBoardList = board.nextBoardList.map { bored ->
+            getBoardWithLegalityAndCheckState(bored)
+        }.filterIsInstance<Board.Final.Legal>()
+            .map { bored ->
+                Board.WithMove(
+                    partialBoard = Board.Partial(bored.size, bored.tileList),
+                    move = bored.withMoveBoard.move
+                )
+            }
+        board.copy(nextBoardList = onlyLegalNextBoardList)
+    }
 
 fun createEmptyBoard(size: Int): Board.Partial {
     val tileList = (0 until size).map { tileY ->
@@ -142,6 +162,49 @@ fun createWithIllegalNextBoardList(boardList: List<Board.WithMove>): List<Board.
     }
 }
 
+fun getBoardWithLegalityAndCheckState(board: Board.WithMove): Board.Final {
+    val queen = board.tileList.find { tile -> tile.piece is Queen } ?: return Board.Final.Legal(board, CheckState.NONE, emptyList())
+    val possibleQueenTiles = getPossibleQueenMoves(queen, board)
+
+    val whiteKing = board.tileList.first { tile -> tile.piece is King && tile.piece.color == Color.WHITE }
+    val possibleWhiteKingTiles = possibleKingTiles(whiteKing, board)
+
+    val blackKing = board.tileList.first { tile -> tile.piece is King && tile.piece.color == Color.BLACK }
+    val possibleBlackKingTiles = possibleKingTiles(blackKing, board)
+
+    // Try to test for legality
+    //  Kings near each other:
+    val twoKingsNearEachOther = possibleWhiteKingTiles.any { tile -> tile.piece is King }
+            || possibleBlackKingTiles.any { tile -> tile.piece is King }
+    if (twoKingsNearEachOther) {
+        return Board.Final.Illegal(board, Legality.Illegal.KingsAdjacent)
+    }
+
+    // King in check making needs to make a move:
+    //  First need to check for checkmates
+    val inCheck = possibleQueenTiles.any { tile -> tile.piece is King }
+    val checkButWrongMove = inCheck && board.move == Move.WHITE // TODO only works for kQK
+    if (checkButWrongMove) {
+        return Board.Final.Illegal(board, Legality.Illegal.CheckButWrongMove)
+    }
+
+    // Create CheckState // TODO only works for kQK
+    val checkState = if (inCheck) {
+        val nextBlackKingMoves = possibleBlackKingTiles.filter { tile ->
+            !possibleQueenTiles.contains(tile) && !possibleWhiteKingTiles.contains(tile)
+        }
+        if (nextBlackKingMoves.isEmpty()) {
+            CheckState.BLACK_IN_CHECKMATE
+        } else {
+            CheckState.BLACK_IN_CHECK
+        }
+    } else {
+        CheckState.NONE
+    }
+
+    return Board.Final.Legal(board, checkState, emptyList())
+}
+
 private fun getNextPossibleBoards(
     legalBoard: Board.Final.Legal,
     possibleBlackKingTiles: List<Tile>,
@@ -160,7 +223,10 @@ private fun getNextPossibleBoards(
             val blackKingTileIndex = tileList.indexOf(blackKing)
             val newTileList = tileList.toMutableList()
                 .apply {
-                    set(replacingTileIndex, tile.copy(location = tileList[replacingTileIndex].location, piece = blackKing.piece))
+                    set(
+                        replacingTileIndex,
+                        tile.copy(location = tileList[replacingTileIndex].location, piece = blackKing.piece)
+                    )
                     set(blackKingTileIndex, tile.copy(location = tileList[blackKingTileIndex].location, piece = Empty))
                 }
                 .toList()
