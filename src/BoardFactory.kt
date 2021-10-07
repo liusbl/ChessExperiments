@@ -155,7 +155,14 @@ private fun createSingleBoardWithIllegalNextBoardList(board: Board.WithMove): Bo
             CheckState.BLACK_IN_CHECK
         }
     } else {
-        CheckState.NONE
+        val nextBlackKingMoves = possibleBlackKingTiles.filter { tile ->
+            !possibleQueenTiles.contains(tile) && !possibleWhiteKingTiles.contains(tile)
+        }
+        if (board.move == Move.BLACK && !possibleQueenTiles.contains(blackKing) && nextBlackKingMoves.isEmpty()) {
+            CheckState.STALEMATE
+        } else {
+            CheckState.NONE
+        }
     }
 
     val legalBoard = Board.Final.Legal(board, checkState, emptyList())
