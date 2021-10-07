@@ -29,9 +29,11 @@ sealed interface Board {
     sealed class Final(
         val witMoveBoard: WithMove,
     ) : Board by witMoveBoard {
+        abstract val index: Int
         abstract val legality: Legality
 
         data class Legal(
+            override val index: Int,
             val withMoveBoard: WithMove,
             val checkState: CheckState,
             val nextBoardList: List<WithMove>
@@ -39,7 +41,17 @@ sealed interface Board {
             override val legality = Legality.Legal
         }
 
+        data class LegalFinalV2(
+            override val index: Int,
+            val withMoveBoard: WithMove,
+            val checkState: CheckState,
+            val nextBoardIndexes: List<Int>
+        ) : Final(withMoveBoard) {
+            override val legality = Legality.Legal
+        }
+
         data class Illegal(
+            override val index: Int,
             val withMoveBoard: WithMove,
             override val legality: Legality.Illegal
         ): Final(withMoveBoard)

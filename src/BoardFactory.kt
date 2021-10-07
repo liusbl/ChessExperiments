@@ -32,17 +32,51 @@ fun main() {
 
     val final = filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList)
 
-    val finalOnlyLegal = final.filterIsInstance<Board.Final.Legal>()
+    val finalized = finalizeIndexes(final)
 
     println("Finished")
 }
 
-private fun filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList: List<Board.Final>): List<Board.Final> {
+fun finalizeIndexes(boardList: List<Board.Final>): List<Board.Final> {
+    // TODO figure out why location x is wrong, for now just fix those
+
+    return boardList.map { board ->
+        when (board) {
+            is Board.Final.Illegal -> {
+                board
+            }
+            is Board.Final.Legal -> {
+                val indexes = board.nextBoardList
+                    .map { nextBoard ->
+                        // TODO THIS IS HACK FIX FOR WRONG LOCATION X
+                        val emptyBoard = createEmptyBoard(board.size)
+                        val tileList = nextBoard.partialBoard.tileList.toMutableList()
+                            .zip(emptyBoard.tileList) { tile, empty ->
+                                Tile(empty.location, tile.piece)
+                            }
+                        val partialBoard = nextBoard.partialBoard.copy(tileList = tileList)
+                        nextBoard.copy(partialBoard = partialBoard)
+                    }
+                    .mapNotNull { nextBoard ->
+                        boardList.find { listBoard ->
+                            listBoard is Board.Final.Legal && listBoard.tileList == nextBoard.tileList
+                        }
+                    }.map { nextBoard -> nextBoard.index }
+                Board.Final.LegalFinalV2(board.index, board.withMoveBoard, board.checkState, indexes)
+            }
+            else -> {
+                throw Exception("no")
+            }
+        }
+    }
+}
+
+fun filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList: List<Board.Final>): List<Board.Final> {
     return boardListWithIllegalNextBoardList.map { board ->
         if (board !is Board.Final.Legal) return@map board
 
-        val onlyLegalNextBoardList = board.nextBoardList.map { bored ->
-            getBoardWithLegalityAndCheckState(bored)
+        val onlyLegalNextBoardList = board.nextBoardList.mapIndexed { index, bored ->
+            getBoardWithLegalityAndCheckState(index, bored)
         }.filterIsInstance<Board.Final.Legal>()
             .map { bored ->
                 Board.WithMove(
@@ -108,13 +142,13 @@ fun setMoves(boardList: List<Board.Partial>): List<Board.WithMove> {
 }
 
 fun createWithIllegalNextBoardList(boardList: List<Board.WithMove>): List<Board.Final> {
-    return boardList.map { board ->
+    return boardList.mapIndexed { index, board ->
         // Get possible moves
-        return@map createSingleBoardWithIllegalNextBoardList(board)
+        return@mapIndexed createSingleBoardWithIllegalNextBoardList(index, board)
     }
 }
 
-private fun createSingleBoardWithIllegalNextBoardList(board: Board.WithMove): Board.Final {
+private fun createSingleBoardWithIllegalNextBoardList(index: Int, board: Board.WithMove): Board.Final {
     val whiteKing = board.tileList.first { tile -> tile.piece is King && tile.piece.color == Color.WHITE }
     val possibleWhiteKingTiles = possibleKingTiles(whiteKing, board)
 
@@ -126,10 +160,11 @@ private fun createSingleBoardWithIllegalNextBoardList(board: Board.WithMove): Bo
     val twoKingsNearEachOther = possibleWhiteKingTiles.any { tile -> tile.piece is King }
             || possibleBlackKingTiles.any { tile -> tile.piece is King }
     if (twoKingsNearEachOther) {
-        return Board.Final.Illegal(board, Legality.Illegal.KingsAdjacent)
+        return Board.Final.Illegal(index, board, Legality.Illegal.KingsAdjacent)
     }
 
     val queen = board.tileList.find { tile -> tile.piece is Queen } ?: return Board.Final.Legal(
+        index,
         board,
         CheckState.NONE,
         emptyList()
@@ -141,7 +176,7 @@ private fun createSingleBoardWithIllegalNextBoardList(board: Board.WithMove): Bo
     val inCheck = possibleQueenTiles.any { tile -> tile.piece is King }
     val checkButWrongMove = inCheck && board.move == Move.WHITE // TODO only works for kQK
     if (checkButWrongMove) {
-        return Board.Final.Illegal(board, Legality.Illegal.CheckButWrongMove)
+        return Board.Final.Illegal(index, board, Legality.Illegal.CheckButWrongMove)
     }
 
     // Create CheckState // TODO only works for kQK
@@ -165,7 +200,7 @@ private fun createSingleBoardWithIllegalNextBoardList(board: Board.WithMove): Bo
         }
     }
 
-    val legalBoard = Board.Final.Legal(board, checkState, emptyList())
+    val legalBoard = Board.Final.Legal(index, board, checkState, emptyList())
 
     return getNextPossibleBoards(
         legalBoard,
@@ -178,7 +213,7 @@ private fun createSingleBoardWithIllegalNextBoardList(board: Board.WithMove): Bo
     )
 }
 
-fun getBoardWithLegalityAndCheckState(board: Board.WithMove): Board.Final {
+fun getBoardWithLegalityAndCheckState(index: Int, board: Board.WithMove): Board.Final {
     val whiteKing = board.tileList.first { tile -> tile.piece is King && tile.piece.color == Color.WHITE }
     val possibleWhiteKingTiles = possibleKingTiles(whiteKing, board)
 
@@ -190,10 +225,11 @@ fun getBoardWithLegalityAndCheckState(board: Board.WithMove): Board.Final {
     val twoKingsNearEachOther = possibleWhiteKingTiles.any { tile -> tile.piece is King }
             || possibleBlackKingTiles.any { tile -> tile.piece is King }
     if (twoKingsNearEachOther) {
-        return Board.Final.Illegal(board, Legality.Illegal.KingsAdjacent)
+        return Board.Final.Illegal(index, board, Legality.Illegal.KingsAdjacent)
     }
 
     val queen = board.tileList.find { tile -> tile.piece is Queen } ?: return Board.Final.Legal(
+        index,
         board,
         CheckState.NONE,
         emptyList()
@@ -205,7 +241,7 @@ fun getBoardWithLegalityAndCheckState(board: Board.WithMove): Board.Final {
     val inCheck = possibleQueenTiles.any { tile -> tile.piece is King }
     val checkButWrongMove = inCheck && board.move == Move.WHITE // TODO only works for kQK
     if (checkButWrongMove) {
-        return Board.Final.Illegal(board, Legality.Illegal.CheckButWrongMove)
+        return Board.Final.Illegal(index, board, Legality.Illegal.CheckButWrongMove)
     }
 
     // Create CheckState // TODO only works for kQK
@@ -222,7 +258,7 @@ fun getBoardWithLegalityAndCheckState(board: Board.WithMove): Board.Final {
         CheckState.NONE
     }
 
-    return Board.Final.Legal(board, checkState, emptyList())
+    return Board.Final.Legal(index, board, checkState, emptyList())
 }
 
 private fun getNextPossibleBoards(
