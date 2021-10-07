@@ -13,20 +13,20 @@ fun main(args: Array<String>) {
 
     println("Starting")
     println()
+//
+//    val allPieceCombinationBoardList = BoardFactory.createAllPieceBoards(
+//        SIZE, listOf(
+//            Piece.King(Color.WHITE),
+//            Piece.King(Color.BLACK),
+//            Piece.Queen(Color.WHITE),
+//        )
+//    )
+//
+//    allPieceCombinationBoardList.forEach {
+//        println(it.getFen())
+//        println(it.getPrintableBoard())
+//        println()
+//    }
 
-    val allPieceCombinationBoardList = BoardFactory.createAllPieceBoards(
-        SIZE, listOf(
-            Piece.King(Color.WHITE),
-            Piece.King(Color.BLACK),
-            Piece.Queen(Color.WHITE),
-        )
-    )
-
-    allPieceCombinationBoardList.forEach {
-        println(it.getFen())
-        println(it.getPrintableBoard())
-        println()
-    }
-
-    println("All piece combination board list size: ${allPieceCombinationBoardList.size}")
+//    println("All piece combination board list size: ${allPieceCombinationBoardList.size}")
 }

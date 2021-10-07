@@ -15,51 +15,54 @@
  *  More TODO
  */
 sealed interface Movement {
-    fun getNextBoardList(tile: Tile, board: Board): List<Board>
+    fun getNextBoardList(tile: Tile, board: Board.Final): List<Board>
 
     object None : Movement {
-        override fun getNextBoardList(tile: Tile, board: Board) = listOf<Board>()
+        override fun getNextBoardList(tile: Tile, board: Board.Final) = listOf<Board>()
     }
 
     data class Basic(val distance: Distance, val direction: Direction) : Movement {
-        override fun getNextBoardList(tile: Tile, board: Board): List<Board> = when (distance) {
-            Distance.ONE -> {
-                when (direction) {
-                    is Direction.AnyOrthogonal -> {
-                        TODO()
-                    }
-                    is Direction.AnyDiagonal -> {
-                        TODO()
-                    }
-                    is Direction.OrthogonalAndDiagonal -> {
-                        direction.getNextLocationList(tile.location)
-                            .filter { location -> location.x >= 0 && location.y >= 0 }
-                            .filter { location -> location.x < board.size && location.y < board.size }
-                            .filter { location ->
-                                val piece = board.tileList.find { tile.location == location }?.piece ?: return@filter true
-                                piece == Piece.Empty || tile.piece.color != piece.color
-                            }
-                            .map { location ->
-                                val tileList = board.tileList
-                                val result = tileList.map { newTile ->
-                                    when {
-                                        newTile == tile -> newTile.copy(piece = Piece.Empty)
-                                        newTile.location == location -> newTile.copy(piece = tile.piece)
-                                        else -> newTile
-                                    }
-                                }
-                                board.copy(
-                                    tileList = result,
-                                    move = if (board.move == Move.WHITE) Move.BLACK else Move.WHITE
-                                )
-                            }
-                    }
-                }
-            }
-            Distance.N -> {
-                listOf()
-            }
+        override fun getNextBoardList(tile: Tile, board: Board.Final): List<Board> {
+            TODO("Not yet implemented")
         }
+        //        override fun getNextBoardList(tile: Tile, board: Board.Full): List<Board> = when (distance) {
+//            Distance.ONE -> {
+//                when (direction) {
+//                    is Direction.AnyOrthogonal -> {
+//                        TODO()
+//                    }
+//                    is Direction.AnyDiagonal -> {
+//                        TODO()
+//                    }
+//                    is Direction.OrthogonalAndDiagonal -> {
+//                        direction.getNextLocationList(tile.location)
+//                            .filter { location -> location.x >= 0 && location.y >= 0 }
+//                            .filter { location -> location.x < board.size && location.y < board.size }
+//                            .filter { location ->
+//                                val piece = board.tileList.find { tile.location == location }?.piece ?: return@filter true
+//                                piece == Piece.Empty || tile.piece.color != piece.color
+//                            }
+//                            .map { location ->
+//                                val tileList = board.tileList
+//                                val result = tileList.map { newTile ->
+//                                    when {
+//                                        newTile == tile -> newTile.copy(piece = Piece.Empty)
+//                                        newTile.location == location -> newTile.copy(piece = tile.piece)
+//                                        else -> newTile
+//                                    }
+//                                }
+//                                board.copy(
+//                                    tileList = result,
+//                                    move = if (board.move == Move.WHITE) Move.BLACK else Move.WHITE
+//                                )
+//                            }
+//                    }
+//                }
+//            }
+//            Distance.N -> {
+//                listOf()
+//            }
+//        }
 
         enum class Distance {
             ONE,
