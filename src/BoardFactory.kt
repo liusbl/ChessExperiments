@@ -35,25 +35,6 @@ fun main() {
     val finalOnlyLegal = final.filterIsInstance<Board.Final.Legal>()
 
     println("Finished")
-//
-//    val empt = createEmptyBoard(4).let { board ->
-//        val tileList = board.tileList.toMutableList().run {
-//            set(0, get(0).copy(piece = Piece.King(Color.WHITE)))
-//            set(1, get(1).copy(piece = Piece.Queen(Color.WHITE)))
-//            set(2, get(2).copy(piece = Piece.King(Color.BLACK)))
-//            this
-//        }
-//        val b = board.copy(
-//            tileList = tileList
-//        )
-//        Board.WithMove(b, Move.BLACK)
-//    }
-
-//    val test = createSingleBoardWithIllegalNextBoardList(empt)
-
-//    val test2 = filterOnlyLegalNextBoards(listOf(test))
-
-//    println("Finished")
 }
 
 private fun filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList: List<Board.Final>): List<Board.Final> {
