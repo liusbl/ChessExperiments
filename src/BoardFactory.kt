@@ -160,8 +160,8 @@ private fun getNextPossibleBoards(
             val blackKingTileIndex = tileList.indexOf(blackKing)
             val newTileList = tileList.toMutableList()
                 .apply {
-                    set(replacingTileIndex, tile.copy(piece = blackKing.piece))
-                    set(blackKingTileIndex, tile.copy(piece = Empty))
+                    set(replacingTileIndex, tile.copy(location = tileList[replacingTileIndex].location, piece = blackKing.piece))
+                    set(blackKingTileIndex, tile.copy(location = tileList[blackKingTileIndex].location, piece = Empty))
                 }
                 .toList()
             newTileList
