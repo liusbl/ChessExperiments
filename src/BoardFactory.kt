@@ -12,7 +12,7 @@ import java.io.File
 
 fun main() {
     println("Starting")
-    val emptyBoard = createEmptyBoard(4)
+    val emptyBoard = createEmptyBoard(8)
 
     val singlePieceBoardList = createAllSinglePieceBoardList(
         emptyBoard,
@@ -23,16 +23,22 @@ fun main() {
         )
     )
 
+    println("Step #1")
     val allCombinedPieceBoardList = combineAllSinglePieceBoardList(singlePieceBoardList)
 
+    println("Step #2")
     val allCombinedPieceBoardListWithMoves = setMoves(allCombinedPieceBoardList)
 
+    println("Step #3")
     val boardListWithIllegalNextBoardList = createWithIllegalNextBoardList(allCombinedPieceBoardListWithMoves)
 
+    println("Step #4")
     val final = filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList)
 
+    println("Step #5")
     val finalized = finalizeIndexes(final)
 
+    println("Step #6")
     val fin = finalized.map(BoardFenMapper::getFen)
 
     File("out.txt").writeText(fin.joinToString(separator = "\n"))
@@ -43,7 +49,8 @@ fun main() {
 fun finalizeIndexes(boardList: List<Board.Final>): List<Board.Final> {
     // TODO figure out why location x is wrong, for now just fix those
 
-    return boardList.map { board ->
+    return boardList.mapIndexed { ind, board ->
+        println("Progress: ${ind.toFloat() / boardList.size}")
         when (board) {
             is Board.Final.Illegal -> {
                 board
