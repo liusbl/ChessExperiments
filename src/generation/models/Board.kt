@@ -1,7 +1,5 @@
 package generation.models
 
-import generation.models.*
-
 fun Board.tileAt(x: Int, y: Int): Tile? {
     return tileList.find { tile -> tile.location.x == x && tile.location.y == y }
 }
@@ -58,39 +56,8 @@ sealed interface Board {
             override val index: Int,
             val withMoveBoard: WithMove,
             override val legality: Legality.Illegal
-        ): Final(withMoveBoard)
+        ) : Final(withMoveBoard)
 
         override fun toString() = "\n" + this.getPrintableBoard()
-
-        fun Board.getFen(): String {
-            var result = ""
-            tileList.chunked(size)
-                .forEach { row ->
-                    var emptyCount = 0
-                    row.forEach { tile ->
-                        if (tile.piece is Piece.Empty) {
-                            emptyCount++
-                        } else {
-                            result += if (emptyCount == 0) {
-                                "${tile.piece}"
-                            } else {
-                                "${emptyCount}${tile.piece}".also {
-                                    emptyCount = 0
-                                }
-                            }
-                        }
-                    }
-                    result += if (emptyCount != 0) {
-                        "$emptyCount/"
-                    } else {
-                        "/"
-                    }
-                }
-            result = result.dropLast(1)
-//            result += " ${move.letter}"
-            result += " $legality"
-//            result += " $nextBoardList"
-            return result
-        }
     }
 }
