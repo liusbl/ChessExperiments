@@ -4,6 +4,44 @@ fun Board.tileAt(x: Int, y: Int): Tile? {
     return tileList.find { tile -> tile.location.x == x && tile.location.y == y }
 }
 
+// TODO consider adding mapping function for Initial -> WithMove -> WithLegality, etc..
+sealed interface Boo {
+    val size: Int
+    val tileList: List<Tile>
+
+    data class Initial(
+        override val size: Int,
+        override val tileList: List<Tile>
+    ) : Board
+
+    data class WithMove(
+        override val size: Int,
+        override val tileList: List<Tile>,
+        val move: Move
+    ) : Board
+
+    data class WithLegality(
+        override val size: Int,
+        override val tileList: List<Tile>,
+        val move: Move,
+        val legality: Legality
+    ) : Board
+
+    data class WithCheckState(
+        override val size: Int,
+        override val tileList: List<Tile>,
+        val move: Move,
+        val legalityWithCheckState: LegalityWithCheckState
+    ) : Board {
+        sealed interface LegalityWithCheckState {
+            data class Legal(val legality: Legality.Legal, val checkState: CheckState) : LegalityWithCheckState
+
+            data class Illegal(val legality: Legality.Illegal) : LegalityWithCheckState
+        }
+    }
+}
+
+
 sealed interface Board {
     val size: Int
     val tileList: List<Tile>

@@ -28,6 +28,9 @@ fun main() {
     println("Step #3: Append moves to boards. ${Instant.now()}")
     val allCombinedPieceBoardListWithMoves = appendMovesToBoardList(combinedPieceBoardList)
 
+        // TODO: TEMPORARY
+        .map { board -> Board.WithMove(Board.Partial(board.size, board.tileList), board.move) }
+
     println("Step #4: FIX THIS. ${Instant.now()}")
     val boardListWithIllegalNextBoardList = createWithIllegalNextBoardList(allCombinedPieceBoardListWithMoves)
 

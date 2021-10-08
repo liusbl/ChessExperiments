@@ -1,15 +1,12 @@
 package generation
 
-import generation.models.Board
-import generation.models.Location
-import generation.models.Piece
-import generation.models.Tile
+import generation.models.*
 
-fun createEmptyBoard(size: Int): Board.Partial {
+fun createEmptyBoard(size: Int): Boo.Initial {
     val tileList = (0 until size).map { tileY ->
         (0 until size).map { tileX ->
             Tile(Location(tileX, tileY), Piece.Empty)
         }
     }.flatten()
-    return Board.Partial(size, tileList)
+    return Boo.Initial(size, tileList)
 }

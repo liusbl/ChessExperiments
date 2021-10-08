@@ -1,13 +1,13 @@
 package generation
 
-import generation.models.Board
+import generation.models.Boo
 import generation.models.Move
 
-fun appendMovesToBoardList(boardList: List<Board.Partial>): List<Board.WithMove> {
+fun appendMovesToBoardList(boardList: List<Boo.Initial>): List<Boo.WithMove> {
     return boardList.flatMap { board ->
         listOf(
-            Board.WithMove(board, Move.WHITE),
-            Board.WithMove(board, Move.BLACK),
+            Boo.WithMove(board.size, board.tileList, Move.WHITE),
+            Boo.WithMove(board.size, board.tileList, Move.BLACK),
         )
     }
 }
