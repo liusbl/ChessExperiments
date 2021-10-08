@@ -27,7 +27,7 @@ fun main() {
     println("Step #3: Append moves to boards. ${Instant.now()}")
     val allCombinedPieceBoardListWithMoves = appendMovesToBoardList(combinedPieceBoardList)
 
-        // TODO: TEMPORARY
+    // TODO: TEMPORARY
 //        .map { board -> Board.WithMove(Board.Partial(board.size, board.tileList), board.move) }
 
     println("Step #4: Append legalities to boards. ${Instant.now()}")
@@ -46,6 +46,137 @@ fun main() {
 
     println("Finished")
 }
+
+
+private fun appendNextBoardIndexList(
+    boardList: List<Boo.WithCheckState>
+): List<Boo.WithNextBoardList> {
+    return boardList.map { board ->
+        when (board.legalityWithCheckState) {
+            is Boo.WithCheckState.LegalityWithCheckState.Illegal -> {
+                Boo.WithNextBoardList(
+                    board.size,
+                    board.tileList,
+                    board.move,
+                    board.index,
+                    Boo.WithNextBoardList.LegalityWithCheckState.Illegal(board.legalityWithCheckState.legality)
+                )
+            }
+            is Boo.WithCheckState.LegalityWithCheckState.Legal -> {
+                when (board.legalityWithCheckState.checkState) {
+                    CheckState.DRAW,
+                    CheckState.STALEMATE,
+                    CheckState.BLACK_IN_CHECKMATE,
+                    CheckState.WHITE_IN_CHECKMATE -> {
+                        Boo.WithNextBoardList(
+                            board.size,
+                            board.tileList,
+                            board.move,
+                            board.index,
+                            Boo.WithNextBoardList.LegalityWithCheckState.Legal(
+                                checkState = board.legalityWithCheckState.checkState,
+                                nextBoardIndexList = emptyList()
+                            )
+                        )
+                    }
+                    else -> {
+                        val whiteKing = board.tileList.first { tile -> tile.piece == King(Color.WHITE) }
+                        val nextWhiteKingTiles = getNextKingTiles(whiteKing, board)
+
+                        val blackKing = board.tileList.first { tile -> tile.piece == King(Color.BLACK) }
+                        val nextBlackKingTiles = getNextKingTiles(blackKing, board)
+
+                        val queen = board.tileList.first { tile -> tile.piece is Queen }
+                        val nextQueenTiles = getNextQueenTiles(queen, board)
+
+                        // TODO
+
+                        Boo.WithNextBoardList(
+                            board.size,
+                            board.tileList,
+                            board.move,
+                            board.index,
+                            Boo.WithNextBoardList.LegalityWithCheckState.Illegal(Legality.Illegal.KingsAdjacent)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+//    return if (legalBoard.withMoveBoard.move == Move.BLACK) {
+//        // Create nextBoardList
+//        //  White King's nextBoardList:
+//        val nextBlackKingBoardList = possibleBlackKingTiles
+//            .map { tile ->
+//                val tileList = legalBoard.tileList
+//                val replacingTileIndex = tileList.indexOfFirst { tile.location == it.location }
+//                val blackKingTileIndex = tileList.indexOf(blackKing)
+//                val newTileList = tileList.toMutableList()
+//                    .apply {
+//                        set(
+//                            replacingTileIndex,
+//                            tile.copy(location = tileList[replacingTileIndex].location, piece = blackKing.piece)
+//                        )
+//                        set(
+//                            blackKingTileIndex,
+//                            tile.copy(location = tileList[blackKingTileIndex].location, piece = Empty)
+//                        )
+//                    }
+//                    .toList()
+//                newTileList
+//            }
+//            .filter { newTileList -> newTileList.count { tile -> tile.piece is King } == 2 }
+//            .map { newTileList ->
+//                Board.WithMove(Board.Partial(legalBoard.size, newTileList), move = Move.WHITE)
+//            }
+//
+//        legalBoard.copy(nextBoardList = nextBlackKingBoardList)
+//    } else {
+//        // Create nextBoardList
+//        //  Queen's nextBoardList:
+//        val nextQueenBoardList = possibleQueenTiles
+//            .map { tile ->
+//                val tileList = legalBoard.tileList
+//                val replacingTileIndex = tileList.indexOfFirst { tile.location == it.location }
+//                val queenTileIndex = tileList.indexOf(queen)
+//                val newTileList = tileList.toMutableList()
+//                    .apply {
+//                        set(replacingTileIndex, tile.copy(piece = queen.piece))
+//                        set(queenTileIndex, tile.copy(piece = Empty))
+//                    }
+//                    .toList()
+//                newTileList
+//            }
+//            .filter { newTileList -> newTileList.count { tile -> tile.piece is King } == 2 }
+//            .map { newTileList ->
+//                Board.WithMove(Board.Partial(legalBoard.size, newTileList), move = Move.BLACK)
+//            }
+//
+//        // Create nextBoardList
+//        //  White King's nextBoardList:
+//        val nextWhiteKingBoardList = possibleWhiteKingTiles
+//            .map { tile ->
+//                val tileList = legalBoard.tileList
+//                val replacingTileIndex = tileList.indexOfFirst { tile.location == it.location }
+//                val whiteKingTileIndex = tileList.indexOf(whiteKing)
+//                val newTileList = tileList.toMutableList()
+//                    .apply {
+//                        set(replacingTileIndex, tile.copy(piece = whiteKing.piece))
+//                        set(whiteKingTileIndex, tile.copy(piece = Empty))
+//                    }
+//                    .toList()
+//                newTileList
+//            }
+//            .filter { newTileList -> newTileList.count { tile -> tile.piece is King } == 2 }
+//            .map { newTileList ->
+//                Board.WithMove(Board.Partial(legalBoard.size, newTileList), move = Move.BLACK)
+//            }
+//
+//        legalBoard.copy(nextBoardList = nextQueenBoardList + nextWhiteKingBoardList)
+//    }
+}
+
 
 // TODO USE map of index to tileList string, mapOf("414" to "k--Q\n----..")
 
@@ -369,7 +500,7 @@ private fun possibleKingTiles(king: Tile, board: Board.WithMove): List<Tile> {
     )
 }
 
-private fun getPossibleQueenMoves(queen: Tile, board: Board.WithMove): List<Tile> {
+fun getPossibleQueenMoves(queen: Tile, board: Board.WithMove): List<Tile> {
     val leftMoves = (queen.location.x - 1 downTo 0)
         .takeWhile { x -> board.tileAt(x, queen.location.y)?.piece is Empty }
         .mapNotNull { x -> board.tileAt(x, queen.location.y) }

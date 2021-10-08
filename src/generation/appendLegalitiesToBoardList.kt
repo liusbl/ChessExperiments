@@ -5,16 +5,16 @@ import generation.models.Piece.*
 
 fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithCheckState> {
     return boardList.mapIndexed { index, board ->
-        val whiteKing = board.tileList.first { tile -> tile.piece is King && tile.piece.color == Color.WHITE }
-        val possibleWhiteKingTiles = possibleKingTiles(whiteKing, board)
+        val whiteKing = board.tileList.first { tile -> tile.piece == King(Color.WHITE) }
+        val nextWhiteKingTiles = getNextKingTiles(whiteKing, board)
 
-        val blackKing = board.tileList.first { tile -> tile.piece is King && tile.piece.color == Color.BLACK }
-        val possibleBlackKingTiles = possibleKingTiles(blackKing, board)
+        val blackKing = board.tileList.first { tile -> tile.piece == King(Color.BLACK) }
+        val nextBlackKingTiles = getNextKingTiles(blackKing, board)
 
         // Try to test for legality
         //  Kings near each other:
-        val twoKingsNearEachOther = possibleWhiteKingTiles.any { tile -> tile.piece is King }
-                || possibleBlackKingTiles.any { tile -> tile.piece is King }
+        val twoKingsNearEachOther = nextWhiteKingTiles.any { tile -> tile.piece is King }
+                || nextBlackKingTiles.any { tile -> tile.piece is King }
         if (twoKingsNearEachOther) {
             return@mapIndexed Boo.WithCheckState(
                 board.size,
@@ -32,11 +32,11 @@ fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithChe
             index,
             Boo.WithCheckState.LegalityWithCheckState.Legal(checkState = CheckState.DRAW),
         )
-        val possibleQueenTiles = getPossibleQueenMoves(queen, board)
+        val nextQueenTiles = getNextQueenTiles(queen, board)
 
         // King in check making needs to make a move:
         //  First need to check for checkmates
-        val inCheck = possibleQueenTiles.any { tile -> tile.piece is King }
+        val inCheck = nextQueenTiles.any { tile -> tile.piece is King }
         val checkButWrongMove = inCheck && board.move == Move.WHITE // TODO only works for kQK
         if (checkButWrongMove) {
             return@mapIndexed Boo.WithCheckState(
@@ -50,8 +50,8 @@ fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithChe
 
         // Create generation.models.CheckState // TODO only works for kQK
         val checkState = if (inCheck) {
-            val nextBlackKingMoves = possibleBlackKingTiles.filter { tile ->
-                !possibleQueenTiles.contains(tile) && !possibleWhiteKingTiles.contains(tile)
+            val nextBlackKingMoves = nextBlackKingTiles.filter { tile ->
+                !nextQueenTiles.contains(tile) && !nextWhiteKingTiles.contains(tile)
             }
             if (nextBlackKingMoves.isEmpty()) {
                 CheckState.BLACK_IN_CHECKMATE
@@ -72,7 +72,12 @@ fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithChe
     }
 }
 
-private fun possibleKingTiles(king: Tile, board: Boo.WithMove): List<Tile> {
+// TODO sealed class nesting could possibly solve this
+fun getNextKingTiles(king: Tile, board: Boo.WithCheckState): List<Tile> {
+    return getNextKingTiles(king, Boo.WithMove(board.size, board.tileList, board.move))
+}
+
+private fun getNextKingTiles(king: Tile, board: Boo.WithMove): List<Tile> {
     val leftMove = board.tileAt(king.location.x - 1, king.location.y)
         ?.takeIf { tile -> tile.piece is Empty || tile.piece.color != king.piece.color }
     val rightMove = board.tileAt(king.location.x + 1, king.location.y)
@@ -103,7 +108,12 @@ private fun possibleKingTiles(king: Tile, board: Boo.WithMove): List<Tile> {
     )
 }
 
-private fun getPossibleQueenMoves(queen: Tile, board: Boo.WithMove): List<Tile> {
+// TODO sealed class nesting could possibly solve this
+fun getNextQueenTiles(queen: Tile, board: Boo.WithCheckState): List<Tile> {
+    return getNextQueenTiles(queen, Boo.WithMove(board.size, board.tileList, board.move))
+}
+
+private fun getNextQueenTiles(queen: Tile, board: Boo.WithMove): List<Tile> {
     val leftMoves = (queen.location.x - 1 downTo 0)
         .takeWhile { x -> board.tileAt(x, queen.location.y)?.piece is Empty }
         .mapNotNull { x -> board.tileAt(x, queen.location.y) }
