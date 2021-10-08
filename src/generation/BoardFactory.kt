@@ -21,21 +21,21 @@ fun main() {
     )
 
     println("Step #2: Combine all single piece board lists. ${Instant.now()}")
-    val combinedPieceBoardList = combineAllSinglePieceBoardList(singlePieceBoardList)
+    val combinedPieceBoardList = combineSinglePieceBoardLists(singlePieceBoardList)
 
     println("Step #3: Append moves to board lists. ${Instant.now()}")
-    val allCombinedPieceBoardListWithMoves = setMoves(combinedPieceBoardList)
+    val allCombinedPieceBoardListWithMoves = appendMovesToBoardList(combinedPieceBoardList)
 
-    println("Step #4: Append moves to board lists. ${Instant.now()}")
+    println("Step #4: FIX THIS. ${Instant.now()}")
     val boardListWithIllegalNextBoardList = createWithIllegalNextBoardList(allCombinedPieceBoardListWithMoves)
 
-    println("Step #4")
+    println("Step #5. ${Instant.now()}")
     val final = filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList)
 
-    println("Step #5")
+    println("Step #6. ${Instant.now()}")
     val finalized = finalizeIndexes(final)
 
-    println("Step #6")
+    println("Step #7. ${Instant.now()}")
     val fin = finalized.map(BoardFenMapper::getFen)
 
     File("out.txt").writeText(fin.joinToString(separator = "\n"))
@@ -92,36 +92,6 @@ fun filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList: List<Board.Fina
                 )
             }
         board.copy(nextBoardList = onlyLegalNextBoardList)
-    }
-}
-
-fun combineAllSinglePieceBoardList(singlePieceBoardList: List<List<Board.Partial>>): List<Board.Partial> {
-    return singlePieceBoardList.reduce { acc: List<Board.Partial>, next: List<Board.Partial> ->
-        acc.map { combinedBoard ->
-            next.map { nextBoard ->
-                val updatedTileList = combinedBoard.tileList.zip(nextBoard.tileList) { oldTile, nextTile ->
-                    if (oldTile.piece == Empty) {
-                        oldTile.copy(piece = nextTile.piece)
-                    } else {
-                        oldTile
-                    }
-                }
-                nextBoard.copy(tileList = updatedTileList)
-            }
-        }.flatten()
-    }.filter { board ->
-        board.tileList.count { tile ->
-            tile.piece !is Empty
-        } == singlePieceBoardList.size
-    }
-}
-
-fun setMoves(boardList: List<Board.Partial>): List<Board.WithMove> {
-    return boardList.flatMap { board ->
-        listOf(
-            Board.WithMove(board, Move.WHITE),
-            Board.WithMove(board, Move.BLACK),
-        )
     }
 }
 

@@ -1,6 +1,6 @@
 package generation
 
-import Board
+import generation.models.Board
 import generation.models.Location
 import generation.models.Piece
 import generation.models.Tile
