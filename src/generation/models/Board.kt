@@ -27,7 +27,6 @@ sealed interface Board {
         val move: Move
     ) : Board by partialBoard
 
-    // Add ID or HASH for full board, so that it can be easily searched.
     sealed class Final(
         val witMoveBoard: WithMove,
     ) : Board by witMoveBoard {
