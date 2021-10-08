@@ -73,7 +73,7 @@ fun appendNextBoardLists(boardList: List<Boo.WithCheckState>): List<Boo.WithNext
                             board.index,
                             // TODO incorrect check state
                             Boo.WithNextBoardList.LegalityWithCheckState.Legal(
-                                checkState = CheckState.NONE,
+                                checkState = board.legalityWithCheckState.checkState,
                                 nextBoardList = nextBoardList
                             )
                         )

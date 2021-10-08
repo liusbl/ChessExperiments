@@ -62,7 +62,7 @@ fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithChe
             CheckState.NONE
         }
 
-        return@mapIndexed Boo.WithCheckState(
+        Boo.WithCheckState(
             board.size,
             board.tileList,
             board.move,
