@@ -72,9 +72,9 @@ object BoardFenMapper {
                         emptyCount++
                     } else {
                         result += if (emptyCount == 0) {
-                            "${tile.piece}"
+                            "${tile.piece.letter}"
                         } else {
-                            "${emptyCount}${tile.piece}".also {
+                            "${emptyCount}${tile.piece.letter}".also {
                                 emptyCount = 0
                             }
                         }
@@ -96,6 +96,7 @@ object BoardFenMapper {
             result += ","
             result += board.legalityWithCheckState.checkState.notation
             result += ";"
+            result += ";TODO add indexes"
 //            board.nextBoardIndexes.forEach { index ->
 //                result += "$index"
 //                result += ","
