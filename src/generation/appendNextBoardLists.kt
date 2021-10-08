@@ -41,7 +41,7 @@ fun appendNextBoardLists(boardList: List<Boo.WithCheckState>): List<Boo.WithNext
                                 val whiteKing = board.tileList.first { tile -> tile.piece == King(Color.WHITE) }
                                 val nextWhiteKingTiles = getNextKingTiles(whiteKing, board)
 
-                                val queen = board.tileList.first { tile -> tile.piece is Queen }
+                                val queen = board.tileList.first { tile -> tile.piece == Queen(Color.WHITE) }
                                 val nextQueenTiles = getNextQueenTiles(queen, board)
 
                                 nextWhiteKingTiles.map { tile -> tile.location }
@@ -50,7 +50,7 @@ fun appendNextBoardLists(boardList: List<Boo.WithCheckState>): List<Boo.WithNext
                                             .setPiece(whiteKing.location, Empty())
                                     } + nextQueenTiles.map { tile -> tile.location }
                                     .map { nextQueenLocation ->
-                                        board.setPiece(nextQueenLocation, King(Color.WHITE))
+                                        board.setPiece(nextQueenLocation, Queen(Color.WHITE))
                                             .setPiece(queen.location, Empty())
                                     }
                             }

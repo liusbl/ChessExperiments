@@ -33,9 +33,8 @@ fun main() {
     println("Step #5: Append next board lists. ${Instant.now()}")
     val boardListWithNextBoardLists = appendNextBoardLists(boardListWithCheckState)
 
-    // Clear illegal next boards.
-    println("Step #6. ${Instant.now()}")
-//    val finalized = finalizeIndexes(final)
+    println("Step #6: Filter legal next board lists. ${Instant.now()}")
+    val boardListWithLegalNextBoardLists = filterLegalNextBoardLists(boardListWithNextBoardLists)
 
     println("Step #7. ${Instant.now()}")
 //    val fin = finalized.map(BoardFenMapper::getFen)
@@ -43,6 +42,26 @@ fun main() {
 //    File("out.txt").writeText(fin.joinToString(separator = "\n"))
 
     println("Finished")
+}
+
+fun filterLegalNextBoardLists(boardList: List<Boo.WithNextBoardList>): List<Boo.WithNextBoardList> {
+    return boardList.map { board ->
+        if (board.legalityWithCheckState !is Boo.WithNextBoardList.LegalityWithCheckState.Legal ||
+            board.legalityWithCheckState.nextBoardList.isEmpty()
+        ) {
+            return@map board
+        }
+
+        val nextBoardList = board.legalityWithCheckState.nextBoardList.map { nextBoard ->
+            Boo.WithMove(nextBoard.size, nextBoard.tileList, nextBoard.move.next())
+        }
+        val nextBoardListWithLegalities = appendCheckStateToBoardList(nextBoardList)
+        val legalNextBoardList = nextBoardListWithLegalities.filter { nextBoard ->
+            nextBoard.legalityWithCheckState is Boo.WithCheckState.LegalityWithCheckState.Legal
+        }
+
+        board.copy(legalityWithCheckState = board.legalityWithCheckState.copy(nextBoardList = legalNextBoardList))
+    }
 }
 
 // TODO USE map of index to tileList string, mapOf("414" to "k--Q\n----..")
