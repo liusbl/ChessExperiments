@@ -43,6 +43,8 @@ sealed interface Boo {
 
             data class Illegal(val legality: Legality.Illegal) : LegalityWithCheckState
         }
+
+        override fun toString() = getPrintableBoard(tileList, size)
     }
 
     data class WithNextBoardList(
@@ -57,12 +59,33 @@ sealed interface Boo {
                 val legality: Legality.Legal = Legality.Legal,
                 val checkState: CheckState,
                 val nextBoardList: List<WithCheckState>
-            ) : LegalityWithCheckState
+            ) : LegalityWithCheckState {
+                override fun toString() = "$legality, checkState=$checkState, nextBoardList=$nextBoardList"
+            }
 
-            data class Illegal(val legality: Legality.Illegal) : LegalityWithCheckState
+            data class Illegal(val legality: Legality.Illegal) : LegalityWithCheckState {
+                override fun toString() = "$legality"
+            }
         }
+
+        override fun toString(): String {
+            val printableBoard = getPrintableBoard(tileList, size)
+            return "WithNextBoardList(move=$move, index=$index, board:\n$printableBoard\n legality=$legalityWithCheckState)"
+        }
+
     }
 }
+
+fun getPrintableBoard(tileList: List<Tile>, size: Int) = "\n" + tileList.chunked(size)
+    .joinToString(
+        separator = "",
+    ) { row ->
+        row.joinToString(
+            separator = "",
+            postfix = "\n",
+            transform = { tile -> tile.piece.letter.toString() })
+    }
+
 
 sealed interface Board {
     val size: Int

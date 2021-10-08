@@ -5,7 +5,7 @@ import generation.models.Piece.*
 import java.time.Instant
 import java.util.*
 
-private const val BOARD_SIZE = 8
+private const val BOARD_SIZE = 4
 
 fun main() {
     println("Step #0: Create empty board of size $BOARD_SIZE. ${Instant.now()}")
