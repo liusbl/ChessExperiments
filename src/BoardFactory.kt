@@ -30,7 +30,8 @@ fun main() {
     val allCombinedPieceBoardListWithMoves = setMoves(allCombinedPieceBoardList)
 
     println("Step #3")
-    val boardListWithIllegalNextBoardList = createWithIllegalNextBoardList(allCombinedPieceBoardListWithMoves)
+    val boardListWithIllegalNextBoardList =
+        createWithIllegalNextBoardList(allCombinedPieceBoardListWithMoves)
 
     println("Step #4")
     val final = filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList)
@@ -46,31 +47,31 @@ fun main() {
     println("Finished")
 }
 
+// TODO USE map of index to tileList string, mapOf("414" to "k--Q\n----..")
+
 fun finalizeIndexes(boardList: List<Board.Final>): List<Board.Final> {
     // TODO figure out why location x is wrong, for now just fix those
-
-    return boardList.mapIndexed { ind, board ->
-        println("Progress: ${ind.toFloat() / boardList.size}")
+    var chunkSize = boardList.size / 5
+    return boardList.mapIndexed { index, board ->
+        if (index == chunkSize) {
+            println("Finalizing indexes: ${chunkSize.toFloat() / boardList.size}")
+            chunkSize += boardList.size / 5
+        }
+//        val tileList = thing.key
+//        val (board, index) = thing.value
         when (board) {
             is Board.Final.Illegal -> {
                 board
             }
             is Board.Final.Legal -> {
                 val indexes = board.nextBoardList
-                    .map { nextBoard ->
-                        // TODO THIS IS HACK FIX FOR WRONG LOCATION X
-                        val emptyBoard = createEmptyBoard(board.size)
-                        val tileList = nextBoard.partialBoard.tileList.toMutableList()
-                            .zip(emptyBoard.tileList) { tile, empty ->
-                                Tile(empty.location, tile.piece)
-                            }
-                        val partialBoard = nextBoard.partialBoard.copy(tileList = tileList)
-                        nextBoard.copy(partialBoard = partialBoard)
-                    }
                     .mapNotNull { nextBoard ->
+//                        val value = boardList[nextBoard.tileList]
+//                        value
                         boardList.find { listBoard ->
                             listBoard is Board.Final.Legal && listBoard.tileList == nextBoard.tileList
                         }
+//                    }.map { nextBoard -> nextBoard.second }
                     }.map { nextBoard -> nextBoard.index }
                 Board.Final.LegalFinalV2(board.index, board.withMoveBoard, board.checkState, indexes)
             }
@@ -152,10 +153,47 @@ fun setMoves(boardList: List<Board.Partial>): List<Board.WithMove> {
 }
 
 fun createWithIllegalNextBoardList(boardList: List<Board.WithMove>): List<Board.Final> {
+//fun createWithIllegalNextBoardList(boardList: List<Board.WithMove>): Map<List<Tile>, Pair<Board.Final, Int>> {
+    var chunkSize = boardList.size / 5
     return boardList.mapIndexed { index, board ->
+        if (index == chunkSize) {
+            println("Creating illegal next board lists: ${chunkSize.toFloat() / boardList.size}")
+            chunkSize += boardList.size / 5
+        }
         // Get possible moves
         return@mapIndexed createSingleBoardWithIllegalNextBoardList(index, board)
+    }.also {
+        chunkSize = boardList.size / 5
     }
+        .mapIndexed { index, board ->
+            if (index == chunkSize) {
+                println("Fixing board Location X: ${chunkSize.toFloat() / boardList.size}")
+                chunkSize += boardList.size / 5
+            }
+            when (board) {
+                is Board.Final.Illegal -> {
+                    board
+                }
+                is Board.Final.Legal -> {
+                    val nextBoardList = board.nextBoardList
+                        .map { nextBoard ->
+                            // TODO THIS IS HACK FIX FOR WRONG LOCATION X
+                            val emptyBoard = createEmptyBoard(board.size)
+                            val tileList = nextBoard.partialBoard.tileList.toMutableList()
+                                .zip(emptyBoard.tileList) { tile, empty ->
+                                    Tile(empty.location, tile.piece)
+                                }
+                            val partialBoard = nextBoard.partialBoard.copy(tileList = tileList)
+                            nextBoard.copy(partialBoard = partialBoard)
+                        }
+                    board.copy(nextBoardList = nextBoardList)
+                }
+                else -> TODO()
+            }
+        }
+//                .associate { board ->
+//                    board.tileList to (board to board.index)
+//                }
 }
 
 private fun createSingleBoardWithIllegalNextBoardList(index: Int, board: Board.WithMove): Board.Final {
