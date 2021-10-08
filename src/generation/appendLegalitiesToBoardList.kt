@@ -3,7 +3,7 @@ package generation
 import generation.models.*
 import generation.models.Piece.*
 
-fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithCheckState> {
+fun appendCheckStateToBoardList(boardList: List<Board.WithMove>): List<Board.WithCheckState> {
     return boardList.mapIndexed { index, board ->
         val whiteKing = board.tileList.first { tile -> tile.piece == King(Color.WHITE) }
         val nextWhiteKingTiles = getNextKingTiles(whiteKing, board)
@@ -16,21 +16,21 @@ fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithChe
         val twoKingsNearEachOther = nextWhiteKingTiles.any { tile -> tile.piece is King }
                 || nextBlackKingTiles.any { tile -> tile.piece is King }
         if (twoKingsNearEachOther) {
-            return@mapIndexed Boo.WithCheckState(
+            return@mapIndexed Board.WithCheckState(
                 board.size,
                 board.tileList,
                 board.move,
                 index,
-                Boo.WithCheckState.LegalityWithCheckState.Illegal(Legality.Illegal.KingsAdjacent)
+                Board.WithCheckState.LegalityWithCheckState.Illegal(Legality.Illegal.KingsAdjacent)
             )
         }
 
-        val queen = board.tileList.find { tile -> tile.piece is Queen } ?: return@mapIndexed Boo.WithCheckState(
+        val queen = board.tileList.find { tile -> tile.piece is Queen } ?: return@mapIndexed Board.WithCheckState(
             board.size,
             board.tileList,
             board.move,
             index,
-            Boo.WithCheckState.LegalityWithCheckState.Legal(checkState = CheckState.DRAW),
+            Board.WithCheckState.LegalityWithCheckState.Legal(checkState = CheckState.DRAW),
         )
         val nextQueenTiles = getNextQueenTiles(queen, board)
 
@@ -39,12 +39,12 @@ fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithChe
         val inCheck = nextQueenTiles.any { tile -> tile.piece is King }
         val checkButWrongMove = inCheck && board.move == Move.WHITE // TODO only works for kQK
         if (checkButWrongMove) {
-            return@mapIndexed Boo.WithCheckState(
+            return@mapIndexed Board.WithCheckState(
                 board.size,
                 board.tileList,
                 board.move,
                 index,
-                Boo.WithCheckState.LegalityWithCheckState.Illegal(Legality.Illegal.CheckButWrongMove),
+                Board.WithCheckState.LegalityWithCheckState.Illegal(Legality.Illegal.CheckButWrongMove),
             )
         }
 
@@ -62,22 +62,22 @@ fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithChe
             CheckState.NONE
         }
 
-        Boo.WithCheckState(
+        Board.WithCheckState(
             board.size,
             board.tileList,
             board.move,
             index,
-            Boo.WithCheckState.LegalityWithCheckState.Legal(checkState = checkState),
+            Board.WithCheckState.LegalityWithCheckState.Legal(checkState = checkState),
         )
     }
 }
 
 // TODO sealed class nesting could possibly solve this
-fun getNextKingTiles(king: Tile, board: Boo.WithCheckState): List<Tile> {
-    return getNextKingTiles(king, Boo.WithMove(board.size, board.tileList, board.move))
+fun getNextKingTiles(king: Tile, board: Board.WithCheckState): List<Tile> {
+    return getNextKingTiles(king, Board.WithMove(board.size, board.tileList, board.move))
 }
 
-private fun getNextKingTiles(king: Tile, board: Boo.WithMove): List<Tile> {
+private fun getNextKingTiles(king: Tile, board: Board.WithMove): List<Tile> {
     val leftMove = board.tileAt(king.location.x - 1, king.location.y)
         ?.takeIf { tile -> tile.piece is Empty || tile.piece.color != king.piece.color }
     val rightMove = board.tileAt(king.location.x + 1, king.location.y)
@@ -109,11 +109,11 @@ private fun getNextKingTiles(king: Tile, board: Boo.WithMove): List<Tile> {
 }
 
 // TODO sealed class nesting could possibly solve this
-fun getNextQueenTiles(queen: Tile, board: Boo.WithCheckState): List<Tile> {
-    return getNextQueenTiles(queen, Boo.WithMove(board.size, board.tileList, board.move))
+fun getNextQueenTiles(queen: Tile, board: Board.WithCheckState): List<Tile> {
+    return getNextQueenTiles(queen, Board.WithMove(board.size, board.tileList, board.move))
 }
 
-private fun getNextQueenTiles(queen: Tile, board: Boo.WithMove): List<Tile> {
+private fun getNextQueenTiles(queen: Tile, board: Board.WithMove): List<Tile> {
     val leftMoves = (queen.location.x - 1 downTo 0)
         .takeWhile { x -> board.tileAt(x, queen.location.y)?.piece is Empty }
         .mapNotNull { x -> board.tileAt(x, queen.location.y) }

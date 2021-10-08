@@ -1,13 +1,13 @@
 package generation
 
-import generation.models.Boo
+import generation.models.Board
 import generation.models.Piece
 import generation.models.Tile
 
-fun createAllSinglePieceBoardList(emptyBoard: Boo.Initial, pieceList: List<Piece>): List<List<Boo.Initial>> {
+fun createAllSinglePieceBoardList(emptyBoard: Board.Initial, pieceList: List<Piece>): List<List<Board.Initial>> {
     return pieceList.map { piece ->
         emptyBoard.tileList.map { filledTile ->
-            Boo.Initial(emptyBoard.size, emptyBoard.tileList.map { emptyTile ->
+            Board.Initial(emptyBoard.size, emptyBoard.tileList.map { emptyTile ->
                 if (emptyTile.location == filledTile.location) {
                     Tile(emptyTile.location, piece)
                 } else {

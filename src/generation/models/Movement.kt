@@ -18,14 +18,14 @@ package generation.models
  *  More TODO
  */
 sealed interface Movement {
-    fun getNextBoardList(tile: Tile, board: Board.Final): List<Board>
+    fun getNextBoardList(tile: Tile, board: Board.WithNextBoardList): List<Board>
 
     object None : Movement {
-        override fun getNextBoardList(tile: Tile, board: Board.Final) = listOf<Board>()
+        override fun getNextBoardList(tile: Tile, board: Board.WithNextBoardList) = listOf<Board>()
     }
 
     data class Basic(val distance: Distance, val direction: Direction) : Movement {
-        override fun getNextBoardList(tile: Tile, board: Board.Final): List<Board> {
+        override fun getNextBoardList(tile: Tile, board: Board.WithNextBoardList): List<Board> {
             TODO("Not yet implemented")
         }
         //        override fun getNextBoardList(tile: generation.models.Tile, board: Board.Full): List<Board> = when (distance) {

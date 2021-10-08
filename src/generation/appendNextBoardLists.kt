@@ -1,35 +1,35 @@
 package generation
 
-import generation.models.Boo
+import generation.models.Board
 import generation.models.CheckState
 import generation.models.Move
 import generation.models.Piece.*
 import generation.models.setPiece
 
-fun appendNextBoardLists(boardList: List<Boo.WithCheckState>): List<Boo.WithNextBoardList> {
+fun appendNextBoardLists(boardList: List<Board.WithCheckState>): List<Board.WithNextBoardList> {
     return boardList.map { board ->
         when (board.legalityWithCheckState) {
-            is Boo.WithCheckState.LegalityWithCheckState.Illegal -> {
-                Boo.WithNextBoardList(
+            is Board.WithCheckState.LegalityWithCheckState.Illegal -> {
+                Board.WithNextBoardList(
                     board.size,
                     board.tileList,
                     board.move,
                     board.index,
-                    Boo.WithNextBoardList.LegalityWithCheckState.Illegal(board.legalityWithCheckState.legality)
+                    Board.WithNextBoardList.LegalityWithCheckState.Illegal(board.legalityWithCheckState.legality)
                 )
             }
-            is Boo.WithCheckState.LegalityWithCheckState.Legal -> {
+            is Board.WithCheckState.LegalityWithCheckState.Legal -> {
                 when (board.legalityWithCheckState.checkState) {
                     CheckState.DRAW,
                     CheckState.STALEMATE,
                     CheckState.BLACK_IN_CHECKMATE,
                     CheckState.WHITE_IN_CHECKMATE -> {
-                        Boo.WithNextBoardList(
+                        Board.WithNextBoardList(
                             board.size,
                             board.tileList,
                             board.move,
                             board.index,
-                            Boo.WithNextBoardList.LegalityWithCheckState.Legal(
+                            Board.WithNextBoardList.LegalityWithCheckState.Legal(
                                 checkState = board.legalityWithCheckState.checkState,
                                 nextBoardList = emptyList()
                             )
@@ -66,13 +66,13 @@ fun appendNextBoardLists(boardList: List<Boo.WithCheckState>): List<Boo.WithNext
                             }
                         }
 
-                        Boo.WithNextBoardList(
+                        Board.WithNextBoardList(
                             board.size,
                             board.tileList,
                             board.move,
                             board.index,
                             // TODO incorrect check state
-                            Boo.WithNextBoardList.LegalityWithCheckState.Legal(
+                            Board.WithNextBoardList.LegalityWithCheckState.Legal(
                                 checkState = board.legalityWithCheckState.checkState,
                                 nextBoardList = nextBoardList
                             )

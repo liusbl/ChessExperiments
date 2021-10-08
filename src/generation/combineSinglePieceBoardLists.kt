@@ -1,10 +1,10 @@
 package generation
 
-import generation.models.Boo
+import generation.models.Board
 import generation.models.Piece
 
-fun combineSinglePieceBoardLists(singlePieceBoardList: List<List<Boo.Initial>>): List<Boo.Initial> {
-    return singlePieceBoardList.reduce { acc: List<Boo.Initial>, next: List<Boo.Initial> ->
+fun combineSinglePieceBoardLists(singlePieceBoardList: List<List<Board.Initial>>): List<Board.Initial> {
+    return singlePieceBoardList.reduce { acc: List<Board.Initial>, next: List<Board.Initial> ->
         acc.map { combinedBoard ->
             next.map { nextBoard ->
                 val updatedTileList = combinedBoard.tileList.zip(nextBoard.tileList) { oldTile, nextTile ->
