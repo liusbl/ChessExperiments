@@ -1,6 +1,5 @@
 package generation.models
 
-import Board
 
 /**
  * Using part of David Parlett's piece movement description.
