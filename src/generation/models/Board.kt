@@ -20,21 +20,15 @@ sealed interface Boo {
         val move: Move
     ) : Board
 
-    data class WithLegality(
-        override val size: Int,
-        override val tileList: List<Tile>,
-        val move: Move,
-        val legality: Legality
-    ) : Board
-
     data class WithCheckState(
         override val size: Int,
         override val tileList: List<Tile>,
         val move: Move,
+        val index: Int,
         val legalityWithCheckState: LegalityWithCheckState
     ) : Board {
         sealed interface LegalityWithCheckState {
-            data class Legal(val legality: Legality.Legal, val checkState: CheckState) : LegalityWithCheckState
+            data class Legal(val legality: Legality.Legal = Legality.Legal, val checkState: CheckState) : LegalityWithCheckState
 
             data class Illegal(val legality: Legality.Illegal) : LegalityWithCheckState
         }

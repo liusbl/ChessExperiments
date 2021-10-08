@@ -2,7 +2,6 @@ package generation
 
 import generation.models.*
 import generation.models.Piece.*
-import java.io.File
 import java.time.Instant
 import java.util.*
 
@@ -29,21 +28,21 @@ fun main() {
     val allCombinedPieceBoardListWithMoves = appendMovesToBoardList(combinedPieceBoardList)
 
         // TODO: TEMPORARY
-        .map { board -> Board.WithMove(Board.Partial(board.size, board.tileList), board.move) }
+//        .map { board -> Board.WithMove(Board.Partial(board.size, board.tileList), board.move) }
 
-    println("Step #4: FIX THIS. ${Instant.now()}")
-    val boardListWithIllegalNextBoardList = createWithIllegalNextBoardList(allCombinedPieceBoardListWithMoves)
+    println("Step #4: Append legalities to boards. ${Instant.now()}")
+    val boardListWithCheckState = appendCheckStateToBoardList(allCombinedPieceBoardListWithMoves)
 
     println("Step #5. ${Instant.now()}")
-    val final = filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList)
+//    val final = filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList)
 
     println("Step #6. ${Instant.now()}")
-    val finalized = finalizeIndexes(final)
+//    val finalized = finalizeIndexes(final)
 
     println("Step #7. ${Instant.now()}")
-    val fin = finalized.map(BoardFenMapper::getFen)
+//    val fin = finalized.map(BoardFenMapper::getFen)
 
-    File("out.txt").writeText(fin.joinToString(separator = "\n"))
+//    File("out.txt").writeText(fin.joinToString(separator = "\n"))
 
     println("Finished")
 }

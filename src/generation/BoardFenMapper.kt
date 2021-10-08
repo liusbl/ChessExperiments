@@ -44,9 +44,10 @@ import generation.models.Piece
  * -------
  * GAME ENDING
  *
- * Check will be denoted by a plus and color in check: +w or +b
- * Checkmate will be denoted by a hashtag and color in checkmate: #w or #b
+ * Check will be denoted by a plus and color in check: +W or +B
+ * Checkmate will be denoted by a hashtag and color in checkmate: #W or #B
  * Stalemate will be denoted by letter 'S'
+ * Draw (2 kings left) will be denoted by letter 'D'
  *
  * -------
  * LEGALITY
