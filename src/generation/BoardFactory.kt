@@ -6,11 +6,13 @@ import java.io.File
 import java.time.Instant
 import java.util.*
 
-fun main() {
-    println("Starting. ${Instant.now()}")
-    val emptyBoard = createEmptyBoard(8)
+private const val BOARD_SIZE = 8
 
-    println("Step #1: Create all single piece board list. ${Instant.now()}")
+fun main() {
+    println("Step #0: Create empty board of size $BOARD_SIZE. ${Instant.now()}")
+    val emptyBoard = createEmptyBoard(BOARD_SIZE)
+
+    println("Step #1: Create all single piece boards. ${Instant.now()}")
     val singlePieceBoardList = createAllSinglePieceBoardList(
         emptyBoard,
         listOf(
@@ -20,10 +22,10 @@ fun main() {
         )
     )
 
-    println("Step #2: Combine all single piece board lists. ${Instant.now()}")
+    println("Step #2: Combine all single piece boards. ${Instant.now()}")
     val combinedPieceBoardList = combineSinglePieceBoardLists(singlePieceBoardList)
 
-    println("Step #3: Append moves to board lists. ${Instant.now()}")
+    println("Step #3: Append moves to boards. ${Instant.now()}")
     val allCombinedPieceBoardListWithMoves = appendMovesToBoardList(combinedPieceBoardList)
 
     println("Step #4: FIX THIS. ${Instant.now()}")
