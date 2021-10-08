@@ -4,11 +4,13 @@ import generation.models.*
 import generation.models.Piece.*
 
 fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithCheckState> {
-    return boardList.mapIndexed { index, board ->
-        val whiteKing = board.tileList.first { tile -> tile.piece == King(Color.WHITE) }
+    return boardList.mapIndexedNotNull { index, board ->
+        val whiteKing = board.tileList.find { tile -> tile.piece == King(Color.WHITE) }
+            ?: return@mapIndexedNotNull null
         val nextWhiteKingTiles = getNextKingTiles(whiteKing, board)
 
-        val blackKing = board.tileList.first { tile -> tile.piece == King(Color.BLACK) }
+        val blackKing = board.tileList.find { tile -> tile.piece == King(Color.BLACK) }
+            ?: return@mapIndexedNotNull null
         val nextBlackKingTiles = getNextKingTiles(blackKing, board)
 
         // Try to test for legality
@@ -16,7 +18,7 @@ fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithChe
         val twoKingsNearEachOther = nextWhiteKingTiles.any { tile -> tile.piece is King }
                 || nextBlackKingTiles.any { tile -> tile.piece is King }
         if (twoKingsNearEachOther) {
-            return@mapIndexed Boo.WithCheckState(
+            return@mapIndexedNotNull Boo.WithCheckState(
                 board.size,
                 board.tileList,
                 board.move,
@@ -25,7 +27,7 @@ fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithChe
             )
         }
 
-        val queen = board.tileList.find { tile -> tile.piece is Queen } ?: return@mapIndexed Boo.WithCheckState(
+        val queen = board.tileList.find { tile -> tile.piece is Queen } ?: return@mapIndexedNotNull Boo.WithCheckState(
             board.size,
             board.tileList,
             board.move,
@@ -39,7 +41,7 @@ fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithChe
         val inCheck = nextQueenTiles.any { tile -> tile.piece is King }
         val checkButWrongMove = inCheck && board.move == Move.WHITE // TODO only works for kQK
         if (checkButWrongMove) {
-            return@mapIndexed Boo.WithCheckState(
+            return@mapIndexedNotNull Boo.WithCheckState(
                 board.size,
                 board.tileList,
                 board.move,
@@ -62,7 +64,7 @@ fun appendCheckStateToBoardList(boardList: List<Boo.WithMove>): List<Boo.WithChe
             CheckState.NONE
         }
 
-        return@mapIndexed Boo.WithCheckState(
+        return@mapIndexedNotNull Boo.WithCheckState(
             board.size,
             board.tileList,
             board.move,

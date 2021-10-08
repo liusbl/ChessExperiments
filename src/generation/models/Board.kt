@@ -4,6 +4,14 @@ fun Board.tileAt(x: Int, y: Int): Tile? {
     return tileList.find { tile -> tile.location.x == x && tile.location.y == y }
 }
 
+fun Boo.WithCheckState.setPiece(location: Location, piece: Piece): Boo.WithCheckState {
+    val index = tileList.indexOfFirst { tile -> tile.location == location }
+    val newTileList = tileList.toMutableList()
+        .apply { set(index, Tile(location, piece)) }
+        .toList()
+    return copy(tileList = newTileList)
+}
+
 // TODO consider adding mapping function for Initial -> WithMove -> WithLegality, etc..
 sealed interface Boo {
     val size: Int
@@ -48,7 +56,7 @@ sealed interface Boo {
             data class Legal(
                 val legality: Legality.Legal = Legality.Legal,
                 val checkState: CheckState,
-                val nextBoardIndexList: List<Int>
+                val nextBoardList: List<WithCheckState>
             ) : LegalityWithCheckState
 
             data class Illegal(val legality: Legality.Illegal) : LegalityWithCheckState

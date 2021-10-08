@@ -33,8 +33,8 @@ fun main() {
     println("Step #4: Append legalities to boards. ${Instant.now()}")
     val boardListWithCheckState = appendCheckStateToBoardList(allCombinedPieceBoardListWithMoves)
 
-    println("Step #5. ${Instant.now()}")
-//    val final = filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList)
+    println("Step #5: Append next board lists. ${Instant.now()}")
+    val boardListWithNextBoardLists = appendNextBoardLists(boardListWithCheckState)
 
     println("Step #6. ${Instant.now()}")
 //    val finalized = finalizeIndexes(final)
@@ -48,7 +48,7 @@ fun main() {
 }
 
 
-private fun appendNextBoardIndexList(
+private fun appendNextBoardLists(
     boardList: List<Boo.WithCheckState>
 ): List<Boo.WithNextBoardList> {
     return boardList.map { board ->
@@ -75,28 +75,51 @@ private fun appendNextBoardIndexList(
                             board.index,
                             Boo.WithNextBoardList.LegalityWithCheckState.Legal(
                                 checkState = board.legalityWithCheckState.checkState,
-                                nextBoardIndexList = emptyList()
+                                nextBoardList = emptyList()
                             )
                         )
                     }
                     else -> {
-                        val whiteKing = board.tileList.first { tile -> tile.piece == King(Color.WHITE) }
-                        val nextWhiteKingTiles = getNextKingTiles(whiteKing, board)
+                        val nextBoardList = when (board.move) {
+                            Move.WHITE -> {
+                                val whiteKing = board.tileList.first { tile -> tile.piece == King(Color.WHITE) }
+                                val nextWhiteKingTiles = getNextKingTiles(whiteKing, board)
 
-                        val blackKing = board.tileList.first { tile -> tile.piece == King(Color.BLACK) }
-                        val nextBlackKingTiles = getNextKingTiles(blackKing, board)
+                                val queen = board.tileList.first { tile -> tile.piece is Queen }
+                                val nextQueenTiles = getNextQueenTiles(queen, board)
 
-                        val queen = board.tileList.first { tile -> tile.piece is Queen }
-                        val nextQueenTiles = getNextQueenTiles(queen, board)
+                                nextWhiteKingTiles.map { tile -> tile.location }
+                                    .map { nextKingLocation ->
+                                        board.setPiece(nextKingLocation, King(Color.WHITE))
+                                            .setPiece(whiteKing.location, Empty)
+                                    } + nextQueenTiles.map { tile -> tile.location }
+                                    .map { nextQueenLocation ->
+                                        board.setPiece(nextQueenLocation, King(Color.WHITE))
+                                            .setPiece(queen.location, Empty)
+                                    }
+                            }
+                            Move.BLACK -> {
+                                val blackKing = board.tileList.first { tile -> tile.piece == King(Color.BLACK) }
+                                val nextBlackKingTiles = getNextKingTiles(blackKing, board)
 
-                        // TODO
+                                nextBlackKingTiles.map { tile -> tile.location }
+                                    .map { nextKingLocation ->
+                                        board.setPiece(nextKingLocation, King(Color.BLACK))
+                                            .setPiece(blackKing.location, Empty)
+                                    }
+                            }
+                        }
 
                         Boo.WithNextBoardList(
                             board.size,
                             board.tileList,
                             board.move,
                             board.index,
-                            Boo.WithNextBoardList.LegalityWithCheckState.Illegal(Legality.Illegal.KingsAdjacent)
+                            // TODO incorrect check state
+                            Boo.WithNextBoardList.LegalityWithCheckState.Legal(
+                                checkState = CheckState.NONE,
+                                nextBoardList = nextBoardList
+                            )
                         )
                     }
                 }
