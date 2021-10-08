@@ -163,12 +163,12 @@ fun createWithIllegalNextBoardList(boardList: List<Board.WithMove>): List<Board.
         // Get possible moves
         return@mapIndexed createSingleBoardWithIllegalNextBoardList(index, board)
     }.also {
-        chunkSize = boardList.size / 5
+        chunkSize = boardList.size /30
     }
         .mapIndexed { index, board ->
             if (index == chunkSize) {
                 println("Fixing board Location X: ${chunkSize.toFloat() / boardList.size}")
-                chunkSize += boardList.size / 5
+                chunkSize += boardList.size /30
             }
             when (board) {
                 is Board.Final.Illegal -> {
