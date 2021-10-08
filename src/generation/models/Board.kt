@@ -28,13 +28,33 @@ sealed interface Boo {
         val legalityWithCheckState: LegalityWithCheckState
     ) : Board {
         sealed interface LegalityWithCheckState {
-            data class Legal(val legality: Legality.Legal = Legality.Legal, val checkState: CheckState) : LegalityWithCheckState
+            data class Legal(
+                val legality: Legality.Legal = Legality.Legal,
+                val checkState: CheckState
+            ) : LegalityWithCheckState
+
+            data class Illegal(val legality: Legality.Illegal) : LegalityWithCheckState
+        }
+    }
+
+    data class WithNextBoardList(
+        override val size: Int,
+        override val tileList: List<Tile>,
+        val move: Move,
+        val index: Int,
+        val legalityWithCheckState: LegalityWithCheckState,
+    ) : Board {
+        sealed interface LegalityWithCheckState {
+            data class Legal(
+                val legality: Legality.Legal = Legality.Legal,
+                val checkState: CheckState,
+                val nextBoardIndexList: List<Int>
+            ) : LegalityWithCheckState
 
             data class Illegal(val legality: Legality.Illegal) : LegalityWithCheckState
         }
     }
 }
-
 
 sealed interface Board {
     val size: Int
