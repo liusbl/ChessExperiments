@@ -1,3 +1,7 @@
+package generation.models
+
+import generation.models.*
+
 fun Board.tileAt(x: Int, y: Int): Tile? {
     return tileList.find { tile -> tile.location.x == x && tile.location.y == y }
 }

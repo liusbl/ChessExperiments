@@ -1,3 +1,5 @@
+package generation.models
+
 sealed class Piece(
     val letter: Char,
     val movement: Movement,

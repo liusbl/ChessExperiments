@@ -1,3 +1,7 @@
+package generation.models
+
+import Board
+
 /**
  * Using part of David Parlett's piece movement description.
  *
@@ -25,7 +29,7 @@ sealed interface Movement {
         override fun getNextBoardList(tile: Tile, board: Board.Final): List<Board> {
             TODO("Not yet implemented")
         }
-        //        override fun getNextBoardList(tile: Tile, board: Board.Full): List<Board> = when (distance) {
+        //        override fun getNextBoardList(tile: generation.models.Tile, board: Board.Full): List<Board> = when (distance) {
 //            Distance.ONE -> {
 //                when (direction) {
 //                    is Direction.AnyOrthogonal -> {
@@ -40,20 +44,20 @@ sealed interface Movement {
 //                            .filter { location -> location.x < board.size && location.y < board.size }
 //                            .filter { location ->
 //                                val piece = board.tileList.find { tile.location == location }?.piece ?: return@filter true
-//                                piece == Piece.Empty || tile.piece.color != piece.color
+//                                piece == generation.models.Piece.Empty || tile.piece.color != piece.color
 //                            }
 //                            .map { location ->
 //                                val tileList = board.tileList
 //                                val result = tileList.map { newTile ->
 //                                    when {
-//                                        newTile == tile -> newTile.copy(piece = Piece.Empty)
+//                                        newTile == tile -> newTile.copy(piece = generation.models.Piece.Empty)
 //                                        newTile.location == location -> newTile.copy(piece = tile.piece)
 //                                        else -> newTile
 //                                    }
 //                                }
 //                                board.copy(
 //                                    tileList = result,
-//                                    move = if (board.move == Move.WHITE) Move.BLACK else Move.WHITE
+//                                    move = if (board.move == generation.models.Move.WHITE) generation.models.Move.BLACK else generation.models.Move.WHITE
 //                                )
 //                            }
 //                    }

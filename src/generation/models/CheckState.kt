@@ -1,3 +1,5 @@
+package generation.models
+
 enum class CheckState(val notation: String) {
     NONE("_"),
     STALEMATE("S"),

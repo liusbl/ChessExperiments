@@ -1,19 +1,16 @@
-import Piece.*
-import java.io.File
+package generation
 
-/**
- * Process of generation:
- *  1. Create empty board
- *  2. Create all single piece boards
- *  3. Combine all single piece boards
- *  4. Filter out illegal boards
- *  5.
- */
+import generation.models.*
+import generation.models.Piece.*
+import java.io.File
+import java.time.Instant
+import java.util.*
 
 fun main() {
-    println("Starting")
+    println("Starting. ${Instant.now()}")
     val emptyBoard = createEmptyBoard(8)
 
+    println("Step #1: Create all single piece board list. ${Instant.now()}")
     val singlePieceBoardList = createAllSinglePieceBoardList(
         emptyBoard,
         listOf(
@@ -23,15 +20,14 @@ fun main() {
         )
     )
 
-    println("Step #1")
-    val allCombinedPieceBoardList = combineAllSinglePieceBoardList(singlePieceBoardList)
+    println("Step #2: Combine all single piece board lists. ${Instant.now()}")
+    val combinedPieceBoardList = combineAllSinglePieceBoardList(singlePieceBoardList)
 
-    println("Step #2")
-    val allCombinedPieceBoardListWithMoves = setMoves(allCombinedPieceBoardList)
+    println("Step #3: Append moves to board lists. ${Instant.now()}")
+    val allCombinedPieceBoardListWithMoves = setMoves(combinedPieceBoardList)
 
-    println("Step #3")
-    val boardListWithIllegalNextBoardList =
-        createWithIllegalNextBoardList(allCombinedPieceBoardListWithMoves)
+    println("Step #4: Append moves to board lists. ${Instant.now()}")
+    val boardListWithIllegalNextBoardList = createWithIllegalNextBoardList(allCombinedPieceBoardListWithMoves)
 
     println("Step #4")
     val final = filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList)
@@ -99,29 +95,6 @@ fun filterOnlyLegalNextBoards(boardListWithIllegalNextBoardList: List<Board.Fina
     }
 }
 
-fun createEmptyBoard(size: Int): Board.Partial {
-    val tileList = (0 until size).map { tileY ->
-        (0 until size).map { tileX ->
-            Tile(Location(tileX, tileY), Empty)
-        }
-    }.flatten()
-    return Board.Partial(size, tileList)
-}
-
-fun createAllSinglePieceBoardList(emptyBoard: Board.Partial, pieceList: List<Piece>): List<List<Board.Partial>> {
-    return pieceList.map { piece ->
-        emptyBoard.tileList.map { filledTile ->
-            Board.Partial(emptyBoard.size, emptyBoard.tileList.map { emptyTile ->
-                if (emptyTile.location == filledTile.location) {
-                    Tile(emptyTile.location, piece)
-                } else {
-                    Tile(emptyTile.location, Empty)
-                }
-            })
-        }
-    }
-}
-
 fun combineAllSinglePieceBoardList(singlePieceBoardList: List<List<Board.Partial>>): List<Board.Partial> {
     return singlePieceBoardList.reduce { acc: List<Board.Partial>, next: List<Board.Partial> ->
         acc.map { combinedBoard ->
@@ -153,7 +126,7 @@ fun setMoves(boardList: List<Board.Partial>): List<Board.WithMove> {
 }
 
 fun createWithIllegalNextBoardList(boardList: List<Board.WithMove>): List<Board.Final> {
-//fun createWithIllegalNextBoardList(boardList: List<Board.WithMove>): Map<List<Tile>, Pair<Board.Final, Int>> {
+//fun createWithIllegalNextBoardList(boardList: List<Board.WithMove>): Map<List<generation.models.Tile>, Pair<Board.Final, Int>> {
     var chunkSize = boardList.size / 5
     return boardList.mapIndexed { index, board ->
         if (index == chunkSize) {
@@ -163,12 +136,12 @@ fun createWithIllegalNextBoardList(boardList: List<Board.WithMove>): List<Board.
         // Get possible moves
         return@mapIndexed createSingleBoardWithIllegalNextBoardList(index, board)
     }.also {
-        chunkSize = boardList.size /30
+        chunkSize = boardList.size / 30
     }
         .mapIndexed { index, board ->
             if (index == chunkSize) {
-                println("Fixing board Location X: ${chunkSize.toFloat() / boardList.size}")
-                chunkSize += boardList.size /30
+                println("Fixing board generation.models.Location X: ${chunkSize.toFloat() / boardList.size}")
+                chunkSize += boardList.size / 30
             }
             when (board) {
                 is Board.Final.Illegal -> {
@@ -227,7 +200,7 @@ private fun createSingleBoardWithIllegalNextBoardList(index: Int, board: Board.W
         return Board.Final.Illegal(index, board, Legality.Illegal.CheckButWrongMove)
     }
 
-    // Create CheckState // TODO only works for kQK
+    // Create generation.models.CheckState // TODO only works for kQK
     val checkState = if (inCheck) {
         val nextBlackKingMoves = possibleBlackKingTiles.filter { tile ->
             !possibleQueenTiles.contains(tile) && !possibleWhiteKingTiles.contains(tile)
@@ -292,7 +265,7 @@ fun getBoardWithLegalityAndCheckState(index: Int, board: Board.WithMove): Board.
         return Board.Final.Illegal(index, board, Legality.Illegal.CheckButWrongMove)
     }
 
-    // Create CheckState // TODO only works for kQK
+    // Create generation.models.CheckState // TODO only works for kQK
     val checkState = if (inCheck) {
         val nextBlackKingMoves = possibleBlackKingTiles.filter { tile ->
             !possibleQueenTiles.contains(tile) && !possibleWhiteKingTiles.contains(tile)

@@ -1,3 +1,5 @@
+package generation.models
+
 sealed class Legality(val letterList: List<Char>) {
     object Legal : Legality(listOf('L'))
 

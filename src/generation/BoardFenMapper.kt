@@ -1,3 +1,8 @@
+package generation
+
+import Board
+import generation.models.Piece
+
 /**
  * FEN CUSTOMIZATIONS
  *
@@ -11,7 +16,7 @@
  *
  * Order of custom FEN parts:
  *  0. Index
- *  1. Legality
+ *  1. generation.models.Legality
  *  2. Check state (unless Illegal)
  *  3. Next Board indexes (unless Illegal)
  *
