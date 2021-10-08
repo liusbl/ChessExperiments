@@ -27,9 +27,6 @@ fun main() {
     println("Step #3: Append moves to boards. ${Instant.now()}")
     val allCombinedPieceBoardListWithMoves = appendMovesToBoardList(combinedPieceBoardList)
 
-    // TODO: TEMPORARY
-//        .map { board -> Board.WithMove(Board.Partial(board.size, board.tileList), board.move) }
-
     println("Step #4: Append legalities to boards. ${Instant.now()}")
     val boardListWithCheckState = appendCheckStateToBoardList(allCombinedPieceBoardListWithMoves)
 
@@ -91,11 +88,11 @@ private fun appendNextBoardLists(
                                 nextWhiteKingTiles.map { tile -> tile.location }
                                     .map { nextKingLocation ->
                                         board.setPiece(nextKingLocation, King(Color.WHITE))
-                                            .setPiece(whiteKing.location, Empty)
+                                            .setPiece(whiteKing.location, Empty())
                                     } + nextQueenTiles.map { tile -> tile.location }
                                     .map { nextQueenLocation ->
                                         board.setPiece(nextQueenLocation, King(Color.WHITE))
-                                            .setPiece(queen.location, Empty)
+                                            .setPiece(queen.location, Empty())
                                     }
                             }
                             Move.BLACK -> {
@@ -105,7 +102,7 @@ private fun appendNextBoardLists(
                                 nextBlackKingTiles.map { tile -> tile.location }
                                     .map { nextKingLocation ->
                                         board.setPiece(nextKingLocation, King(Color.BLACK))
-                                            .setPiece(blackKing.location, Empty)
+                                            .setPiece(blackKing.location, Empty())
                                     }
                             }
                         }
@@ -143,7 +140,7 @@ private fun appendNextBoardLists(
 //                        )
 //                        set(
 //                            blackKingTileIndex,
-//                            tile.copy(location = tileList[blackKingTileIndex].location, piece = Empty)
+//                            tile.copy(location = tileList[blackKingTileIndex].location, piece = Empty())
 //                        )
 //                    }
 //                    .toList()
@@ -166,7 +163,7 @@ private fun appendNextBoardLists(
 //                val newTileList = tileList.toMutableList()
 //                    .apply {
 //                        set(replacingTileIndex, tile.copy(piece = queen.piece))
-//                        set(queenTileIndex, tile.copy(piece = Empty))
+//                        set(queenTileIndex, tile.copy(piece = Empty()))
 //                    }
 //                    .toList()
 //                newTileList
@@ -186,7 +183,7 @@ private fun appendNextBoardLists(
 //                val newTileList = tileList.toMutableList()
 //                    .apply {
 //                        set(replacingTileIndex, tile.copy(piece = whiteKing.piece))
-//                        set(whiteKingTileIndex, tile.copy(piece = Empty))
+//                        set(whiteKingTileIndex, tile.copy(piece = Empty()))
 //                    }
 //                    .toList()
 //                newTileList
@@ -435,7 +432,7 @@ private fun getNextPossibleBoards(
                         )
                         set(
                             blackKingTileIndex,
-                            tile.copy(location = tileList[blackKingTileIndex].location, piece = Empty)
+                            tile.copy(location = tileList[blackKingTileIndex].location, piece = Empty())
                         )
                     }
                     .toList()
@@ -458,7 +455,7 @@ private fun getNextPossibleBoards(
                 val newTileList = tileList.toMutableList()
                     .apply {
                         set(replacingTileIndex, tile.copy(piece = queen.piece))
-                        set(queenTileIndex, tile.copy(piece = Empty))
+                        set(queenTileIndex, tile.copy(piece = Empty()))
                     }
                     .toList()
                 newTileList
@@ -478,7 +475,7 @@ private fun getNextPossibleBoards(
                 val newTileList = tileList.toMutableList()
                     .apply {
                         set(replacingTileIndex, tile.copy(piece = whiteKing.piece))
-                        set(whiteKingTileIndex, tile.copy(piece = Empty))
+                        set(whiteKingTileIndex, tile.copy(piece = Empty()))
                     }
                     .toList()
                 newTileList

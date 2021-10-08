@@ -8,7 +8,7 @@ fun combineSinglePieceBoardLists(singlePieceBoardList: List<List<Boo.Initial>>):
         acc.map { combinedBoard ->
             next.map { nextBoard ->
                 val updatedTileList = combinedBoard.tileList.zip(nextBoard.tileList) { oldTile, nextTile ->
-                    if (oldTile.piece == Piece.Empty) {
+                    if (oldTile.piece == Piece.Empty()) {
                         oldTile.copy(piece = nextTile.piece)
                     } else {
                         oldTile

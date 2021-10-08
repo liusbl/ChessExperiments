@@ -11,7 +11,7 @@ fun createAllSinglePieceBoardList(emptyBoard: Boo.Initial, pieceList: List<Piece
                 if (emptyTile.location == filledTile.location) {
                     Tile(emptyTile.location, piece)
                 } else {
-                    Tile(emptyTile.location, Piece.Empty)
+                    Tile(emptyTile.location, Piece.Empty())
                 }
             })
         }
