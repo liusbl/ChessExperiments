@@ -48,8 +48,7 @@ fun appendCheckStateToBoardList(boardList: List<Board.WithMove>): List<Board.Wit
             )
         }
 
-        // Create generation.models.CheckState // TODO only works for kQK
-        val checkState = if (inCheck) {
+        fun kingHasMoves(): Boolean {
             val whiteKingQueenDistance = whiteKing.location.getDistance(queen.location)
             val nextBlackKingMoves = nextBlackKingTiles.filter { tile ->
                 (!nextQueenTiles.contains(tile) && !nextWhiteKingTiles.contains(tile))
@@ -57,13 +56,26 @@ fun appendCheckStateToBoardList(boardList: List<Board.WithMove>): List<Board.Wit
                 // Top conditions black king cannot walk on defended tiles.
                 // Bottom conditions means king is protecting queen.
             }
-            if (nextBlackKingMoves.isEmpty()) {
-                CheckState.BLACK_IN_CHECKMATE
-            } else {
+            return nextBlackKingMoves.isNotEmpty()
+        }
+
+        // Create generation.models.CheckState // TODO only works for kQK
+        val checkState = if (inCheck) {
+            if (kingHasMoves()) {
                 CheckState.BLACK_IN_CHECK
+            } else {
+                CheckState.BLACK_IN_CHECKMATE
             }
         } else {
-            CheckState.NONE
+            if (board.move == Move.WHITE) {
+                CheckState.NONE
+            } else {
+                if (kingHasMoves()) {
+                    CheckState.NONE
+                } else {
+                    CheckState.STALEMATE
+                }
+            }
         }
 
         Board.WithCheckState(
