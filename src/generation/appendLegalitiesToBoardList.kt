@@ -36,7 +36,7 @@ fun appendCheckStateToBoardList(boardList: List<Board.WithMove>): List<Board.Wit
 
         // King in check making needs to make a move:
         //  First need to check for checkmates
-        val inCheck = nextQueenTiles.any { tile -> tile.piece is King }
+        val inCheck = nextQueenTiles.any { tile -> tile.piece == King(Color.BLACK) }
         val checkButWrongMove = inCheck && board.move == Move.WHITE // TODO only works for kQK
         if (checkButWrongMove) {
             return@mapIndexed Board.WithCheckState(
