@@ -74,7 +74,35 @@ sealed interface Board {
             val printableBoard = getPrintableBoard(tileList, size)
             return "WithNextBoardList(move=$move, index=$index, board:\n$printableBoard\n legality=$legalityWithCheckState)"
         }
+    }
 
+    data class WithNextBoardIndexList(
+        override val size: Int,
+        override val tileList: List<Tile>,
+        val move: Move,
+        val index: Int,
+        val legalityWithCheckState: LegalityWithCheckState,
+    ) : Board {
+        sealed interface LegalityWithCheckState {
+            val legality: Legality
+
+            data class Legal(
+                override val legality: Legality.Legal = Legality.Legal,
+                val checkState: CheckState,
+                val nextBoardIndexList: List<Int>
+            ) : LegalityWithCheckState {
+                override fun toString() = "$legality, checkState=$checkState, nextBoardIndexList=$nextBoardIndexList"
+            }
+
+            data class Illegal(override val legality: Legality.Illegal) : LegalityWithCheckState {
+                override fun toString() = "$legality"
+            }
+        }
+
+        override fun toString(): String {
+            val printableBoard = getPrintableBoard(tileList, size)
+            return "WithNextBoardList(move=$move, index=$index, board:\n$printableBoard\n legality=$legalityWithCheckState)"
+        }
     }
 }
 

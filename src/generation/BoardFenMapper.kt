@@ -62,7 +62,7 @@ import generation.models.Piece
  *
  */
 object BoardFenMapper {
-    fun getFen(board: Board.WithNextBoardList): String {
+    fun getFen(board: Board.WithNextBoardIndexList): String {
         var result = ""
         board.tileList.chunked(board.size)
             .forEach { row ->
@@ -92,18 +92,17 @@ object BoardFenMapper {
         result += "${board.index}"
         result += ","
         result += "${board.legalityWithCheckState.legality.letterList[0]}"
-        if (board.legalityWithCheckState is Board.WithNextBoardList.LegalityWithCheckState.Legal) {
+        if (board.legalityWithCheckState is Board.WithNextBoardIndexList.LegalityWithCheckState.Legal) {
             result += ","
             result += board.legalityWithCheckState.checkState.notation
             result += ";"
-            result += ";TODO add indexes"
-//            board.nextBoardIndexes.forEach { index ->
-//                result += "$index"
-//                result += ","
-//            }
-//            if (board.nextBoardIndexes.isNotEmpty()) {
-//                result = result.dropLast(1)
-//            }
+            board.legalityWithCheckState.nextBoardIndexList.forEach { index ->
+                result += "$index"
+                result += ","
+            }
+            if (board.legalityWithCheckState.nextBoardIndexList.isNotEmpty()) {
+                result = result.dropLast(1)
+            }
         }
         return result
     }
