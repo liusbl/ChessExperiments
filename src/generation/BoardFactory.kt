@@ -1,13 +1,12 @@
 package generation
 
-import generation.models.Board
-import generation.models.Legality
 import generation.models.Piece.*
 import java.io.File
 import java.time.LocalDateTime
 
 private const val BOARD_SIZE = 3
 
+// TODO Consider possible statistics
 fun main() {
     println("Step #0: Create empty board of size $BOARD_SIZE. ${LocalDateTime.now()}")
     val emptyBoard = createEmptyBoard(BOARD_SIZE)

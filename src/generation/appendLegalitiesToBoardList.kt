@@ -50,8 +50,12 @@ fun appendCheckStateToBoardList(boardList: List<Board.WithMove>): List<Board.Wit
 
         // Create generation.models.CheckState // TODO only works for kQK
         val checkState = if (inCheck) {
+            val whiteKingQueenDistance = whiteKing.location.getDistance(queen.location)
             val nextBlackKingMoves = nextBlackKingTiles.filter { tile ->
-                !nextQueenTiles.contains(tile) && !nextWhiteKingTiles.contains(tile)
+                (!nextQueenTiles.contains(tile) && !nextWhiteKingTiles.contains(tile))
+                        && !(tile.location == queen.location && whiteKingQueenDistance < 1.5)
+                // Top conditions black king cannot walk on defended tiles.
+                // Bottom conditions means king is protecting queen.
             }
             if (nextBlackKingMoves.isEmpty()) {
                 CheckState.BLACK_IN_CHECKMATE
@@ -77,24 +81,64 @@ fun getNextKingTiles(king: Tile, board: Board.WithCheckState): List<Tile> {
     return getNextKingTiles(king, Board.WithMove(board.size, board.tileList, board.move))
 }
 
-private fun getNextKingTiles(king: Tile, board: Board.WithMove): List<Tile> {
+private fun getNextKingTiles(king: Tile, board: Board.WithMove, withWhiteQueen: Boolean = false): List<Tile> {
     val leftMove = board.tileAt(king.location.x - 1, king.location.y)
-        ?.takeIf { tile -> tile.piece is Empty || tile.piece.color != king.piece.color }
+        ?.takeIf { tile ->
+            tile.piece is Empty || tile.piece.color != king.piece.color ||
+                    if (withWhiteQueen && king.piece.color == Color.WHITE) {
+                        tile.piece is Queen
+                    } else false
+        }
     val rightMove = board.tileAt(king.location.x + 1, king.location.y)
-        ?.takeIf { tile -> tile.piece is Empty || tile.piece.color != king.piece.color }
+        ?.takeIf { tile ->
+            tile.piece is Empty || tile.piece.color != king.piece.color ||
+                    if (withWhiteQueen && king.piece.color == Color.WHITE) {
+                        tile.piece is Queen
+                    } else false
+        }
     val topMove = board.tileAt(king.location.x, king.location.y - 1)
-        ?.takeIf { tile -> tile.piece is Empty || tile.piece.color != king.piece.color }
+        ?.takeIf { tile ->
+            tile.piece is Empty || tile.piece.color != king.piece.color ||
+                    if (withWhiteQueen && king.piece.color == Color.WHITE) {
+                        tile.piece is Queen
+                    } else false
+        }
     val bottomMove = board.tileAt(king.location.x, king.location.y + 1)
-        ?.takeIf { tile -> tile.piece is Empty || tile.piece.color != king.piece.color }
+        ?.takeIf { tile ->
+            tile.piece is Empty || tile.piece.color != king.piece.color ||
+                    if (withWhiteQueen && king.piece.color == Color.WHITE) {
+                        tile.piece is Queen
+                    } else false
+        }
 
     val topLeftMove = board.tileAt(king.location.x - 1, king.location.y - 1)
-        ?.takeIf { tile -> tile.piece is Empty || tile.piece.color != king.piece.color }
+        ?.takeIf { tile ->
+            tile.piece is Empty || tile.piece.color != king.piece.color ||
+                    if (withWhiteQueen && king.piece.color == Color.WHITE) {
+                        tile.piece is Queen
+                    } else false
+        }
     val topRightMove = board.tileAt(king.location.x + 1, king.location.y - 1)
-        ?.takeIf { tile -> tile.piece is Empty || tile.piece.color != king.piece.color }
+        ?.takeIf { tile ->
+            tile.piece is Empty || tile.piece.color != king.piece.color ||
+                    if (withWhiteQueen && king.piece.color == Color.WHITE) {
+                        tile.piece is Queen
+                    } else false
+        }
     val bottomLeftMove = board.tileAt(king.location.x - 1, king.location.y + 1)
-        ?.takeIf { tile -> tile.piece is Empty || tile.piece.color != king.piece.color }
+        ?.takeIf { tile ->
+            tile.piece is Empty || tile.piece.color != king.piece.color ||
+                    if (withWhiteQueen && king.piece.color == Color.WHITE) {
+                        tile.piece is Queen
+                    } else false
+        }
     val bottomRightMove = board.tileAt(king.location.x + 1, king.location.y + 1)
-        ?.takeIf { tile -> tile.piece is Empty || tile.piece.color != king.piece.color }
+        ?.takeIf { tile ->
+            tile.piece is Empty || tile.piece.color != king.piece.color ||
+                    if (withWhiteQueen && king.piece.color == Color.WHITE) {
+                        tile.piece is Queen
+                    } else false
+        }
 
     return listOfNotNull(
         leftMove,
