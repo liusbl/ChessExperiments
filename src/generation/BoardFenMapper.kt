@@ -1,6 +1,8 @@
 package generation
 
 import generation.models.Board
+import generation.models.CheckState
+import generation.models.Move
 import generation.models.Piece
 
 /**
@@ -107,7 +109,17 @@ object BoardFenMapper {
         return result
     }
 
-    fun getBoard(fen: String): Board {
-        return TODO()
+    fun getBoard(fen: String): IndexBoard? {
+        val (usualFenPart, customFenPart) = fen.split('~')
+        if (!customFenPart.contains("L")) return null
+        val index = customFenPart.split(',')[0].toInt()
+        val move = Move.values().first { it.letter == usualFenPart.last() }
+        val checkState = CheckState.values().first { it.notation == customFenPart.split(',', ';')[2] }
+        val nextBoardIndexList = customFenPart.split(';')[1].split(',').map { it.toInt() }
+        return IndexBoard(index, move, checkState, nextBoardIndexList)
     }
+}
+
+fun main() {
+    println(BoardFenMapper.getBoard("1k1K/4/4/Q3 w~45,L,_;15,78,155,611"))
 }
