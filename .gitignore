@@ -37,3 +37,4 @@ outTmp/
 /test.output
 /kotlin-native/dist
 kotlin-ide/
+/out_fen_8.txt
