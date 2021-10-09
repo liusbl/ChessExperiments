@@ -61,18 +61,22 @@ sealed interface Board {
                 override val legality: Legality.Legal = Legality.Legal,
                 val checkState: CheckState,
                 val nextBoardList: List<WithCheckState>
-            ) : LegalityWithCheckState {
-                override fun toString() = "$legality, checkState=$checkState, nextBoardList=$nextBoardList"
-            }
+            ) : LegalityWithCheckState
 
-            data class Illegal(override val legality: Legality.Illegal) : LegalityWithCheckState {
-                override fun toString() = "$legality"
-            }
+            data class Illegal(override val legality: Legality.Illegal) : LegalityWithCheckState
         }
 
         override fun toString(): String {
             val printableBoard = getPrintableBoard()
-            return "WithNextBoardList(move=$move, index=$index, board:\n$printableBoard\n legality=$legalityWithCheckState)"
+            return when (legalityWithCheckState) {
+                is LegalityWithCheckState.Legal -> {
+                    "$index, $move, LEGAL, checkState: ${legalityWithCheckState.checkState}" +
+                            "\nBoard:$printableBoard nextBoardList:${legalityWithCheckState.nextBoardList}"
+                }
+                is LegalityWithCheckState.Illegal -> {
+                    "$index, $move, ILLEGAL:${legalityWithCheckState.legality.letterList[0]}\nBoard:$printableBoard"
+                }
+            }
         }
     }
 
@@ -89,19 +93,29 @@ sealed interface Board {
             data class Legal(
                 override val legality: Legality.Legal = Legality.Legal,
                 val checkState: CheckState,
+                val nextBoardList: List<WithCheckState>,
                 val nextBoardIndexList: List<Int>
-            ) : LegalityWithCheckState {
-                override fun toString() = "$legality, checkState=$checkState, nextBoardIndexList=$nextBoardIndexList"
-            }
+            ) : LegalityWithCheckState
 
-            data class Illegal(override val legality: Legality.Illegal) : LegalityWithCheckState {
-                override fun toString() = "$legality"
-            }
+            data class Illegal(override val legality: Legality.Illegal) : LegalityWithCheckState
         }
 
         override fun toString(): String {
             val printableBoard = getPrintableBoard()
-            return "WithNextBoardList(move=$move, index=$index, board:\n$printableBoard\n legality=$legalityWithCheckState)"
+            return when (legalityWithCheckState) {
+                is LegalityWithCheckState.Legal -> {
+                    val boardList = legalityWithCheckState.nextBoardIndexList
+                        .zip(legalityWithCheckState.nextBoardList) { index, board ->
+                            "$index $board"
+                        }.joinToString(separator = "\n")
+                    "$index, $move, LEGAL, checkState: ${legalityWithCheckState.checkState}" +
+                            "\nBoard:${printableBoard}Next board list:\n${boardList}"
+                }
+                is LegalityWithCheckState.Illegal -> {
+                    "$index, $move, ILLEGAL:${legalityWithCheckState.legality.letterList[0]}\nBoard:$printableBoard"
+                }
+            }
+
         }
     }
 }

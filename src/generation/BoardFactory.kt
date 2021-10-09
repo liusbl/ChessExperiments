@@ -56,7 +56,7 @@ fun main() {
     val boardFenList = boardListWithNextIndexes.map(BoardFenMapper::getFen)
 
     println("Step #11: Print results to files. ${LocalDateTime.now()}")
-    File("out_boards.txt").writeText(boardListWithLegalNextBoardLists.joinToString(separator = "\n"))
+    File("out_boards.txt").writeText(boardListWithNextIndexes.joinToString(separator = "\n"))
     File("out_fen.txt").writeText(boardFenList.joinToString(separator = "\n"))
 
     println("Finished ${LocalDateTime.now()}")

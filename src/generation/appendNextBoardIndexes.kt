@@ -21,6 +21,7 @@ fun appendNextBoardIndexes(boardList: List<Board.WithNextBoardList>): List<Board
                     board.size, board.tileList, board.move, board.index,
                     Board.WithNextBoardIndexList.LegalityWithCheckState.Legal(
                         checkState = board.legalityWithCheckState.checkState,
+                        nextBoardList = board.legalityWithCheckState.nextBoardList,
                         nextBoardIndexList = emptyList()
                     )
                 )
@@ -34,6 +35,7 @@ fun appendNextBoardIndexes(boardList: List<Board.WithNextBoardList>): List<Board
                     board.size, board.tileList, board.move, board.index,
                     Board.WithNextBoardIndexList.LegalityWithCheckState.Legal(
                         checkState = board.legalityWithCheckState.checkState,
+                        nextBoardList = board.legalityWithCheckState.nextBoardList,
                         nextBoardIndexList = nextBoardIndexList
                     )
                 )
