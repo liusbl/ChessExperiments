@@ -1,9 +1,6 @@
 package generation
 
-import generation.models.Board
-import generation.models.CheckState
-import generation.models.Move
-import generation.models.Piece
+import generation.models.*
 
 /**
  * FEN CUSTOMIZATIONS

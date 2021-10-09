@@ -1,7 +1,4 @@
-package generation
-
-import generation.models.CheckState
-import generation.models.Move
+package generation.models
 
 // TODO: Support for illegal boards
 data class IndexBoard(
