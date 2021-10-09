@@ -112,7 +112,8 @@ object BoardFenMapper {
         val index = customFenPart.split(',')[0].toInt()
         val move = Move.values().first { it.letter == usualFenPart.last() }
         val checkState = CheckState.values().first { it.notation == customFenPart.split(',', ';')[2] }
-        val nextBoardIndexList = customFenPart.split(';')[1].split(',').map { it.toInt() }
+        val indexList = customFenPart.split(';')[1].takeIf { it.isNotBlank() }
+        val nextBoardIndexList = indexList?.split(',')?.map { it.toInt() } ?: emptyList()
         return IndexBoard(index, move, checkState, nextBoardIndexList)
     }
 }
