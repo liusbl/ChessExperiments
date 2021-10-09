@@ -4,7 +4,7 @@ import generation.models.Board
 import generation.models.Legality
 
 fun appendNextBoardIndexes(boardList: List<Board.WithNextBoardList>): List<Board.WithNextBoardIndexList> {
-    val godMap = boardList.associate { board -> board.tileList to board.index }
+    val godMap = boardList.associate { board -> (board.tileList to board.move) to board.index }
     // TODO cleanup
     val boardListWithNextIndexes = boardList.map { board ->
         when {
@@ -27,7 +27,7 @@ fun appendNextBoardIndexes(boardList: List<Board.WithNextBoardList>): List<Board
             }
             else -> {
                 val nextBoardIndexList = board.legalityWithCheckState.nextBoardList.mapNotNull { nextBoard ->
-                    godMap[nextBoard.tileList]
+                    godMap[nextBoard.tileList to nextBoard.move]
                 }
 
                 Board.WithNextBoardIndexList(
