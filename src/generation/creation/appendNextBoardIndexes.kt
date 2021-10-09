@@ -1,4 +1,4 @@
-package generation
+package generation.creation
 
 import generation.models.Board
 import generation.models.Legality

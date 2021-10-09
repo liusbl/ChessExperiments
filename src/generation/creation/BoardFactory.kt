@@ -1,5 +1,6 @@
-package generation
+package generation.creation
 
+import generation.BoardFenMapper
 import generation.models.Piece.*
 import java.io.File
 import java.time.LocalDateTime
