@@ -6,7 +6,7 @@ import generation.models.Piece.*
 import java.io.File
 import java.time.LocalDateTime
 
-private const val BOARD_SIZE = 4
+private const val BOARD_SIZE = 3
 
 fun main() {
     println("Step #0: Create empty board of size $BOARD_SIZE. ${LocalDateTime.now()}")
@@ -31,54 +31,21 @@ fun main() {
     println("Step #4: Append legalities to boards. ${LocalDateTime.now()}")
     val boardListWithCheckState = appendCheckStateToBoardList(allCombinedPieceBoardListWithMoves)
 
-    // TODO cleanup
-    val godMap = boardListWithCheckState.associate { board -> board.tileList to board.index }
-
     println("Step #5: Append next board lists. ${LocalDateTime.now()}")
     val boardListWithNextBoardLists = appendNextBoardLists(boardListWithCheckState)
 
     println("Step #6: Filter legal next board lists. ${LocalDateTime.now()}")
     val boardListWithLegalNextBoardLists = filterLegalNextBoardLists(boardListWithNextBoardLists)
 
-    // TODO cleanup
-    val boardListWithNextIndexes = boardListWithLegalNextBoardLists.map { board ->
-        when {
-            board.legalityWithCheckState !is Board.WithNextBoardList.LegalityWithCheckState.Legal -> {
-                Board.WithNextBoardIndexList(
-                    board.size, board.tileList, board.move, board.index,
-                    Board.WithNextBoardIndexList.LegalityWithCheckState.Illegal(legality = board.legalityWithCheckState.legality as Legality.Illegal)
-                )
-            }
-            board.legalityWithCheckState.nextBoardList.isEmpty() -> {
-                Board.WithNextBoardIndexList(
-                    board.size, board.tileList, board.move, board.index,
-                    Board.WithNextBoardIndexList.LegalityWithCheckState.Legal(
-                        checkState = board.legalityWithCheckState.checkState,
-                        nextBoardIndexList = emptyList()
-                    )
-                )
-            }
-            else -> {
-                val nextBoardIndexList = board.legalityWithCheckState.nextBoardList.mapNotNull { nextBoard ->
-                    godMap[nextBoard.tileList]
-                }
+    println("Step #7: Filter legal next board lists. ${LocalDateTime.now()}")
+    val boardListWithNextIndexes = appendNextBoardIndexes(boardListWithLegalNextBoardLists)
 
-                Board.WithNextBoardIndexList(
-                    board.size, board.tileList, board.move, board.index,
-                    Board.WithNextBoardIndexList.LegalityWithCheckState.Legal(
-                        checkState = board.legalityWithCheckState.checkState,
-                        nextBoardIndexList = nextBoardIndexList
-                    )
-                )
-            }
-        }
-    }
+    println("Step #8: Create FEN representations. ${LocalDateTime.now()}")
+    val boardFenList = boardListWithNextIndexes.map(BoardFenMapper::getFen)
 
-    println("Step #7: Create FEN representations. ${LocalDateTime.now()}")
-    val final = boardListWithNextIndexes.map(BoardFenMapper::getFen)
-
-    println("Step #8: Print results to file. ${LocalDateTime.now()}")
-    File("out.txt").writeText(final.joinToString(separator = "\n"))
+    println("Step #9: Print results to file. ${LocalDateTime.now()}")
+    File("out_boards.txt").writeText(boardListWithLegalNextBoardLists.joinToString(separator = "\n"))
+    File("out_fen.txt").writeText(boardFenList.joinToString(separator = "\n"))
 
     println("Finished ${LocalDateTime.now()}")
 }
