@@ -8,7 +8,12 @@ data class IndexGraph(
     val nextIndexList: List<Int>,
     val parentIndexList: MutableList<Int>,
     var nextGraphList: List<IndexGraph>?
-)
+) {
+    override fun toString(): String {
+        return "$index, ${if (isLegal) "LEGAL" else "ILLEGAL"}, " +
+                "$move, $checkState, \nnextIndexList=$nextIndexList, \nparentIndexList=$parentIndexList"
+    }
+}
 
 @SuppressWarnings("FunctionName")
 fun IndexGraph(board: IndexBoard) = IndexGraph(
