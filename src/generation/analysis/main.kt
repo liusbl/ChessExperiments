@@ -13,7 +13,7 @@ fun main() {
     println("Step #1: Parse fen information to board list. ${LocalDateTime.now()}")
     val indexBoardList = fileLines.mapNotNull(BoardFenMapper::getBoard)
 
-    println("Step #2: Create graph structure TODO. ${LocalDateTime.now()}")
+    println("Step #2: Create graph structure. ${LocalDateTime.now()}")
     val indexGraphList = createIndexGraphList(indexBoardList)
 
     println("Finished ${LocalDateTime.now()}")
