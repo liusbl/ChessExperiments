@@ -4,11 +4,11 @@ import generation.models.IndexBoard
 import generation.models.IndexGraph
 
 fun createIndexGraphList(indexBoardList: List<IndexBoard>): List<IndexGraph> {
-    val graphList = indexBoardList.map { board ->
-        IndexGraph(board.index, board.move, board.checkState, board.nextBoardIndexList, null)
-    }
+    val graphList = indexBoardList.map(::IndexGraph)
     graphList.forEach { graph ->
-        graph.nextGraphList = graph.nextIndexList.mapNotNull { index -> graphList.getOrNull(index) }
+        if (graph.isLegal) {
+            graph.nextGraphList = graph.nextIndexList.mapNotNull(graphList::getOrNull)
+        }
     }
     return graphList
 }
