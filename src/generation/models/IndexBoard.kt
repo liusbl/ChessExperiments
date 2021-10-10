@@ -4,6 +4,7 @@ package generation.models
 data class IndexBoard(
     val index: Int,
     val move: Move,
+    val isLegal: Boolean,
     val checkState: CheckState,
     val nextBoardIndexList: List<Int>
 )
