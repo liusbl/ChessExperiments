@@ -7,11 +7,12 @@ data class IndexGraph(
     val checkState: CheckState,
     val nextIndexList: List<Int>,
     val parentIndexList: MutableList<Int>,
+    var nextIndex: Int?,
     var nextGraphList: List<IndexGraph>?
 ) {
     override fun toString(): String {
         return "$index, ${if (isLegal) "LEGAL" else "ILLEGAL"}, " +
-                "$move, $checkState, \nnextIndexList=$nextIndexList, \nparentIndexList=$parentIndexList"
+                "$move, $checkState, nextIndex=$nextIndex,\nnextIndexList=$nextIndexList, \nparentIndexList=$parentIndexList\n"
     }
 }
 
@@ -23,5 +24,6 @@ fun IndexGraph(board: IndexBoard) = IndexGraph(
     checkState = board.checkState,
     nextIndexList = board.nextBoardIndexList,
     parentIndexList = mutableListOf(),
+    nextIndex = null,
     nextGraphList = null
 )
