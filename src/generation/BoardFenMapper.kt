@@ -106,7 +106,7 @@ object BoardFenMapper {
         return result
     }
 
-    fun getBoard(fen: String): IndexBoard? {
+    fun getBoard(fen: String): IndexBoard {
         val (usualFenPart, customFenPart) = fen.split('~')
         val index = customFenPart.split(',')[0].toInt()
         val move = Move.values().first { it.letter == usualFenPart.last() }
