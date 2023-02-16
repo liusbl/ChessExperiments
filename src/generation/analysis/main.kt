@@ -1,7 +1,6 @@
 package generation.analysis
 
 import generation.BoardFenMapper
-import generation.models.CheckState
 import java.io.File
 import java.time.LocalDateTime
 
@@ -50,17 +49,20 @@ Einama per visus white.
 
 fun main() {
     println("Step #0: Read file. ${LocalDateTime.now()}")
-    val fileLines = File("out_fen_4.txt").readLines()
+    val fileLines = File("out_fen.txt").readLines()
 
     println("Step #1: Parse fen information to board list and ignore useless states. ${LocalDateTime.now()}")
     val indexBoardList = fileLines.map(BoardFenMapper::getBoard)
-        .filterNot { indexBoard -> !indexBoard.isLegal || indexBoard.checkState == CheckState.DRAW }
 
     println("Step #2: Create graph structure. ${LocalDateTime.now()}")
     val indexGraphList = createIndexGraphList(indexBoardList)
 
     println("Step #3: Append parent index list. ${LocalDateTime.now()}")
     appendParentIndexList(indexGraphList)
+
+    println("Step #4: Append parent index list. ${LocalDateTime.now()}")
+    val validIndexGraphList = removeUnusedIndexGraphs(indexGraphList)
+    println(validIndexGraphList)
 
     println("Finished ${LocalDateTime.now()}")
 }
