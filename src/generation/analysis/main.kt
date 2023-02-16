@@ -60,7 +60,7 @@ fun main() {
     println("Step #3: Append parent index list. ${LocalDateTime.now()}")
     appendParentIndexList(indexGraphList)
 
-    println("Step #4: Append parent index list. ${LocalDateTime.now()}")
+    println("Step #4: Remove unused (illegal or drawn) index graphs. ${LocalDateTime.now()}")
     val validIndexGraphList = removeUnusedIndexGraphs(indexGraphList)
     println(validIndexGraphList)
 
