@@ -21,6 +21,8 @@ sealed class Legality(val letterList: List<Char>) {
          *
          * In this situation, there is no previous place for white's queen to have been to make this check.
          * In practice this legality can simply be made by checking whether it has any parent board states.
+         *
+         * TODO This is difficult to do just after creation, because you can only do it after gathering parent indexes
          */
         object Unreachable : Illegal(listOf('U'))
     }
