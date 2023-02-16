@@ -2,7 +2,7 @@ package generation.models
 
 enum class CheckState(val notation: String) {
     NONE("_"),
-    DRAW("D"),
+    DRAW("D"), // Two Kings left on the board
     STALEMATE("S"),
     WHITE_IN_CHECK("+W"),
     BLACK_IN_CHECK("+B"),
