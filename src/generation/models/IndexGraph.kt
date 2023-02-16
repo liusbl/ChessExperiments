@@ -5,19 +5,19 @@ data class IndexGraph(
     val isLegal: Boolean,
     val move: Move,
     val checkState: CheckState,
-    val nextIndexList: List<Int>,
     val parentIndexList: MutableList<Int>,
-    var nextIndex: Int?,
-    var nextGraphList: List<IndexGraph>?
+    val nextIndexList: List<Int>,
+    var nextGraphList: List<IndexGraph>?,
+    var nextBestIndexList: List<Int> // TODO It's not totally clear what is meant by "best"
 ) {
     override fun toString() =
         "IndexGraph(index=$index, " +
             "legality=${if (isLegal) "LEGAL" else "ILLEGAL"}, " +
             "move=$move, " +
             "checkState=$checkState, " +
-            "nextIndex=$nextIndex," +
             "\nnextIndexList=$nextIndexList, " +
-            "\nparentIndexList=$parentIndexList)\n"
+            "\nparentIndexList=$parentIndexList), " +
+            "\nnextBestIndexList=$nextBestIndexList)\n"
 }
 
 @SuppressWarnings("FunctionName")
@@ -26,8 +26,8 @@ fun IndexGraph(board: IndexBoard) = IndexGraph(
     isLegal = board.isLegal,
     move = board.move,
     checkState = board.checkState,
-    nextIndexList = board.nextBoardIndexList,
     parentIndexList = mutableListOf(),
-    nextIndex = null,
-    nextGraphList = null
+    nextIndexList = board.nextBoardIndexList,
+    nextGraphList = null,
+    nextBestIndexList = emptyList(),
 )
