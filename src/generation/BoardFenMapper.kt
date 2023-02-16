@@ -110,11 +110,11 @@ object BoardFenMapper {
         val (usualFenPart, customFenPart) = fen.split('~')
         val index = customFenPart.split(',')[0].toInt()
         val move = Move.values().first { it.letter == usualFenPart.last() }
-        if (!customFenPart.contains("L")) return IndexBoard(index, move, false, CheckState.NONE, emptyList())
+        if (!customFenPart.contains("L")) return IndexBoard(index, usualFenPart, move, false, CheckState.NONE, emptyList())
         val checkState = CheckState.values().first { it.notation == customFenPart.split(',', ';')[2] }
         val indexList = customFenPart.split(';')[1].takeIf { it.isNotBlank() }
         val nextBoardIndexList = indexList?.split(',')?.map { it.toInt() } ?: emptyList()
-        return IndexBoard(index, move, true, checkState, nextBoardIndexList)
+        return IndexBoard(index, usualFenPart, move, true, checkState, nextBoardIndexList)
     }
 }
 

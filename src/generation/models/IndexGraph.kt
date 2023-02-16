@@ -2,6 +2,7 @@ package generation.models
 
 data class IndexGraph(
     val index: Int,
+    val usualFen: String,
     val isLegal: Boolean,
     val move: Move,
     val checkState: CheckState,
@@ -12,6 +13,7 @@ data class IndexGraph(
 ) {
     override fun toString() =
         "IndexGraph(index=$index, " +
+            "usualFen=$usualFen, " +
             "legality=${if (isLegal) "LEGAL" else "ILLEGAL"}, " +
             "move=$move, " +
             "checkState=$checkState, " +
@@ -25,6 +27,7 @@ data class IndexGraph(
 @SuppressWarnings("FunctionName")
 fun IndexGraph(board: IndexBoard) = IndexGraph(
     index = board.index,
+    usualFen = board.usualFen,
     isLegal = board.isLegal,
     move = board.move,
     checkState = board.checkState,
