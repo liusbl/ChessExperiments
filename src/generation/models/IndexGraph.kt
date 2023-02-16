@@ -7,8 +7,8 @@ data class IndexGraph(
     val checkState: CheckState,
     val parentIndexList: MutableList<Int>,
     val nextIndexList: List<Int>,
-    var nextGraphList: List<IndexGraph>?,
-    var nextBestIndexList: List<Int> // TODO It's not totally clear what is meant by "best"
+    val nextGraphList: MutableList<IndexGraph>,
+    val nextBestIndexList: MutableList<Int> // TODO It's not totally clear what is meant by "best"
 ) {
     override fun toString() =
         "IndexGraph(index=$index, " +
@@ -28,6 +28,6 @@ fun IndexGraph(board: IndexBoard) = IndexGraph(
     checkState = board.checkState,
     parentIndexList = mutableListOf(),
     nextIndexList = board.nextBoardIndexList,
-    nextGraphList = null,
-    nextBestIndexList = emptyList(),
+    nextGraphList = mutableListOf(),
+    nextBestIndexList = mutableListOf(),
 )
