@@ -10,10 +10,14 @@ data class IndexGraph(
     var nextIndex: Int?,
     var nextGraphList: List<IndexGraph>?
 ) {
-    override fun toString(): String {
-        return "$index, ${if (isLegal) "LEGAL" else "ILLEGAL"}, " +
-                "$move, $checkState, nextIndex=$nextIndex,\nnextIndexList=$nextIndexList, \nparentIndexList=$parentIndexList\n"
-    }
+    override fun toString() =
+        "IndexGraph(index=$index, " +
+            "legality=${if (isLegal) "LEGAL" else "ILLEGAL"}, " +
+            "move=$move, " +
+            "checkState=$checkState, " +
+            "nextIndex=$nextIndex," +
+            "\nnextIndexList=$nextIndexList, " +
+            "\nparentIndexList=$parentIndexList)\n"
 }
 
 @SuppressWarnings("FunctionName")
