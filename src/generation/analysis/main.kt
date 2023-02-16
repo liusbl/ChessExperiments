@@ -62,6 +62,9 @@ fun main() {
 
     println("Step #4: Remove unused (illegal or drawn) index graphs. ${LocalDateTime.now()}")
     val validIndexGraphList = removeUnusedIndexGraphs(indexGraphList)
+
+    println("Step #5: Append win index list. ${LocalDateTime.now()}")
+    appendWinIndexList(validIndexGraphList)
     println(validIndexGraphList)
 
     println("Finished ${LocalDateTime.now()}")

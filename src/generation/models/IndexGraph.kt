@@ -8,7 +8,7 @@ data class IndexGraph(
     val parentIndexList: MutableList<Int>,
     val nextIndexList: List<Int>,
     val nextGraphList: MutableList<IndexGraph>,
-    val nextBestIndexList: MutableList<Int> // TODO It's not totally clear what is meant by "best"
+    val winIndexList: MutableList<WinIndex>
 ) {
     override fun toString() =
         "IndexGraph(index=$index, " +
@@ -17,7 +17,9 @@ data class IndexGraph(
             "checkState=$checkState, " +
             "\nnextIndexList=$nextIndexList, " +
             "\nparentIndexList=$parentIndexList), " +
-            "\nnextBestIndexList=$nextBestIndexList)\n"
+            "\nwinIndexList=$winIndexList)\n"
+
+    data class WinIndex(val nextIndex: Int, val pliesUntilCheckmate: Int?)
 }
 
 @SuppressWarnings("FunctionName")
@@ -29,5 +31,5 @@ fun IndexGraph(board: IndexBoard) = IndexGraph(
     parentIndexList = mutableListOf(),
     nextIndexList = board.nextBoardIndexList,
     nextGraphList = mutableListOf(),
-    nextBestIndexList = mutableListOf(),
+    winIndexList = mutableListOf(),
 )
