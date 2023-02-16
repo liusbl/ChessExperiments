@@ -52,7 +52,7 @@ fun main() {
     val fileLines = File("out_fen_4.txt").readLines()
 
     println("Step #1: Parse fen information to board list. ${LocalDateTime.now()}")
-    val indexBoardList = fileLines.mapNotNull(BoardFenMapper::getBoard)
+    val indexBoardList = fileLines.map(BoardFenMapper::getBoard)
 
     println("Step #2: Create graph structure. ${LocalDateTime.now()}")
     val indexGraphList = createIndexGraphList(indexBoardList)
