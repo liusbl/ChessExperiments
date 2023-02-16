@@ -1,6 +1,7 @@
 package generation.analysis
 
 import generation.BoardFenMapper
+import generation.models.CheckState
 import java.io.File
 import java.time.LocalDateTime
 
@@ -51,8 +52,9 @@ fun main() {
     println("Step #0: Read file. ${LocalDateTime.now()}")
     val fileLines = File("out_fen_4.txt").readLines()
 
-    println("Step #1: Parse fen information to board list. ${LocalDateTime.now()}")
+    println("Step #1: Parse fen information to board list and ignore useless states. ${LocalDateTime.now()}")
     val indexBoardList = fileLines.map(BoardFenMapper::getBoard)
+        .filterNot { indexBoard -> !indexBoard.isLegal || indexBoard.checkState == CheckState.DRAW }
 
     println("Step #2: Create graph structure. ${LocalDateTime.now()}")
     val indexGraphList = createIndexGraphList(indexBoardList)
