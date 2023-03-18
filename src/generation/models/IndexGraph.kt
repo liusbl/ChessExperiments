@@ -22,6 +22,10 @@ data class IndexGraph(
             "\nparentIndexList=$parentIndexList), " +
             "\nwinIndexList=$winIndexList)\n"
 
+    /**
+     * For White, this represents the moves that it takes to checkmate black.
+     * For Black, this represents the moves that take the longest until checkmate.
+     */
     data class WinIndex(val nextIndex: Int, val pliesUntilCheckmate: Int)
 }
 
