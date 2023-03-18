@@ -3,6 +3,15 @@ package generation.analysis
 import generation.models.CheckState
 import generation.models.IndexGraph
 
+/**
+ * What do I want to see at the end of this operation?
+ * At first, I'm not analysing premoves, so I would just want to see the best moves.
+ * - For all White moves, I want to see each winning move and how many moves until checkmate
+ * - For all Black moves, I want to see the best next move and how many moves until checkmate
+ *      - Best moves are the ones that take the longest until checkmate.
+ *
+ * First steps: manually create the solution for 3x3 board, so that later it could be used as an integration test.
+ */
 fun appendWinIndexList(graphList: List<IndexGraph>) {
     // White to move
     graphList.forEach { graph ->
