@@ -5,7 +5,7 @@ import generation.models.Piece.*
 import java.io.File
 import java.time.LocalDateTime
 
-private const val BOARD_SIZE = 8
+private const val BOARD_SIZE = 3
 
 // TODO Consider possible statistics
 fun main() {

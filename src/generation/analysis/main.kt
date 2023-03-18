@@ -49,7 +49,7 @@ Einama per visus white.
 
 fun main() {
     println("Step #0: Read file. ${LocalDateTime.now()}")
-    val fileLines = File("out_fen.txt").readLines()
+    val fileLines = File("out_fen_2.txt").readLines()
 
     println("Step #1: Parse fen information to board list and ignore useless states. ${LocalDateTime.now()}")
     val indexBoardList = fileLines.map(BoardFenMapper::getBoard)
@@ -65,7 +65,10 @@ fun main() {
 
     println("Step #5: Append win index list. ${LocalDateTime.now()}")
     appendWinIndexList(validIndexGraphList)
+
     println(validIndexGraphList)
+//    println(validIndexGraphList.map { it.usualFen })
+    println(validIndexGraphList.size)
 
     println("Finished ${LocalDateTime.now()}")
 }

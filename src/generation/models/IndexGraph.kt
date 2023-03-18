@@ -21,7 +21,7 @@ data class IndexGraph(
             "\nparentIndexList=$parentIndexList), " +
             "\nwinIndexList=$winIndexList)\n"
 
-    data class WinIndex(val nextIndex: Int, val pliesUntilCheckmate: Int?)
+    data class WinIndex(val nextIndex: Int, val pliesUntilCheckmate: Int)
 }
 
 @SuppressWarnings("FunctionName")
