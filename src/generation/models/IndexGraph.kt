@@ -3,6 +3,7 @@ package generation.models
 data class IndexGraph(
     val index: Int,
     val usualFen: String,
+    val fullFen: String,
     val isLegal: Boolean,
     val move: Move,
     val checkState: CheckState,
@@ -28,6 +29,7 @@ data class IndexGraph(
 fun IndexGraph(board: IndexBoard) = IndexGraph(
     index = board.index,
     usualFen = board.usualFen,
+    fullFen = board.fullFen,
     isLegal = board.isLegal,
     move = board.move,
     checkState = board.checkState,
