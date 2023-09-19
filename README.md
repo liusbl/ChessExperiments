@@ -5,6 +5,7 @@ The current goal is to brute-force analyze all the possible King, King, Queen (K
 - [ ] [Trivial] In KKQ endgame, is it possible to **MOVE** until checkmate from any position? Note: this is a known truth, but not yet answered by this program.
 - [ ] In KKQ endgame, is it possible to **PREMOVE** until checkmate from any position? Note: this is a known truth, but not yet answered by this program.
 - [ ] In KKQ endgame, is it possible to **PREMOVE twice, thrice or n times** until checkmate from any position?
+- [ ] What if it wasn't a Queen, but some more advanced piece, like an Empress, which can move like a Queen and a Knight. What would be it's premoving-to-checkmate capabilities?
 
 ## Additional curiosities:
 - [ ] [When there are more pieces] How many disconnected/unreachable board states there can be? 
