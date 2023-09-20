@@ -11,21 +11,11 @@ class AppendWinIndexListTest {
     // 0W -> 1B#
     @Test
     fun singleMoveMate() {
-        val list = listOf(
-            IndexGraph(
-                index = 0,
-                move = Move.WHITE,
-                checkState = CheckState.NONE,
-                nextIndexList = listOf(1),
-            ),
-            IndexGraph(
-                index = 1,
-                move = Move.BLACK,
-                checkState = CheckState.BLACK_IN_CHECKMATE,
-                nextIndexList = emptyList(),
-            )
+        val list = createWinList(
+            mateIndex = 1,
+            listOf(1),
+            emptyList()
         )
-        appendWinIndexList(list)
 
         assertEquals(WinIndex(1, 1), list[0].winIndexList[0])
     }
@@ -33,36 +23,28 @@ class AppendWinIndexListTest {
     // 0W -> 1B -> 2W -> 3B#
     @Test
     fun twoMoveMate() {
-        val list = listOf(
-            IndexGraph(
-                index = 0,
-                move = Move.WHITE,
-                checkState = CheckState.NONE,
-                nextIndexList = listOf(1),
-            ),
-            IndexGraph(
-                index = 1,
-                move = Move.BLACK,
-                checkState = CheckState.NONE,
-                nextIndexList = listOf(2),
-            ),
-            IndexGraph(
-                index = 2,
-                move = Move.WHITE,
-                checkState = CheckState.NONE,
-                nextIndexList = listOf(3),
-            ),
-            IndexGraph(
-                index = 3,
-                move = Move.BLACK,
-                checkState = CheckState.BLACK_IN_CHECKMATE,
-                nextIndexList = emptyList(),
-            )
+        val list = createWinList(
+            mateIndex = 3,
+            listOf(1),
+            listOf(2),
+            listOf(3),
+            emptyList()
         )
-        appendWinIndexList(list)
 
         assertEquals(WinIndex(1, 3), list[0].winIndexList[0])
     }
+
+    private fun createWinList(
+        mateIndex: Int,
+        vararg eachGraphNextIndexList: List<Int>
+    ): List<IndexGraph> = eachGraphNextIndexList.mapIndexed { index, nextIndexList ->
+        IndexGraph(
+            index = index,
+            move = if (index % 2 == 0) Move.WHITE else Move.BLACK,
+            checkState = if (index == mateIndex) CheckState.BLACK_IN_CHECKMATE else CheckState.NONE,
+            nextIndexList = nextIndexList
+        )
+    }.also { appendWinIndexList(it) }
 
     private fun IndexGraph(
         index: Int,
