@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class AppendWinIndexListTest {
-    // 0W -> 1B#
+    /**
+     * 0W -> 1B#
+     */
     @Test
     fun singleMoveMate() {
         val list = createWinList(
@@ -20,7 +22,9 @@ class AppendWinIndexListTest {
         assertEquals(WinIndex(1, 1), list[0].winIndexList[0])
     }
 
-    // 0W -> 1B -> 2W -> 3B#
+    /**
+     * 0W -> 1B -> 2W -> 3B#
+     */
     @Test
     fun twoMoveMate() {
         val list = createWinList(
@@ -34,7 +38,27 @@ class AppendWinIndexListTest {
         assertEquals(WinIndex(1, 3), list[0].winIndexList[0])
     }
 
-    // 0W -> 1B -> 2W -> 3B -> 4W -> 5B#
+    /**
+     * 0W -> 1B -> 2W -> 3B#
+     *             4W
+     */
+    @Test
+    fun twoMoveTwoBranchMate() {
+        val list = createWinList(
+            mateIndex = 3,
+            listOf(1),
+            listOf(2, 4),
+            listOf(3),
+            emptyList(),
+            listOf(3)
+        )
+
+        assertEquals(WinIndex(1, 3), list[0].winIndexList[0])
+    }
+
+    /**
+     * 0W -> 1B -> 2W -> 3B -> 4W -> 5B#
+     */
     @Test
     fun threeMoveMate() {
         val list = createWinList(
