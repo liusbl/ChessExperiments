@@ -34,6 +34,22 @@ class AppendWinIndexListTest {
         assertEquals(WinIndex(1, 3), list[0].winIndexList[0])
     }
 
+    // 0W -> 1B -> 2W -> 3B -> 4W -> 5B#
+    @Test
+    fun threeMoveMate() {
+        val list = createWinList(
+            mateIndex = 5,
+            listOf(1),
+            listOf(2),
+            listOf(3),
+            listOf(4),
+            listOf(5),
+            emptyList()
+        )
+
+        assertEquals(WinIndex(1, 5), list[0].winIndexList[0])
+    }
+
     private fun createWinList(
         mateIndex: Int,
         vararg eachGraphNextIndexList: List<Int>
