@@ -24,7 +24,6 @@ fun appendWinIndexList(graphList: List<IndexGraph>) {
     var lastWinIndexList = graphList.map { it.winIndexList.toList() }
     var count = 0 // TODO probably not correct
     while (true) {
-        println("Updating win list, ${count++}")
         handleBlackMoves(graphList)
         handleWhiteMoves(graphList)
         val newWinIndexList = graphList.map { it.winIndexList.toList() }
