@@ -40,7 +40,7 @@ class AppendWinIndexListTest {
 
     /**
      * 0W -> 1B -> 2W -> 3B#
-     *             4W
+     *       1B -> 4W -> 3B#
      */
     @Test
     fun twoMoveTwoBranchMate() {
@@ -51,6 +51,26 @@ class AppendWinIndexListTest {
             listOf(3),
             emptyList(),
             listOf(3)
+        )
+
+        assertEquals(WinIndex(1, 3), list[0].winIndexList[0])
+    }
+
+    /**
+     * 0W -> 1B -> 2W -> 3B#
+     *       5B -> 2W -> 3B#
+     *       5B -> 4W -> 3B#
+     */
+    @Test
+    fun twoMoveThreeBranchMate() {
+        val list = createWinList(
+            mateIndex = 3,
+            listOf(1),
+            listOf(2, 4),
+            listOf(3),
+            emptyList(),
+            listOf(3),
+            listOf(2, 4)
         )
 
         assertEquals(WinIndex(1, 3), list[0].winIndexList[0])
