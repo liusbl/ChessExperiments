@@ -117,20 +117,38 @@ class AppendWinIndexListTest {
     /**
      * 0W -> 1B -> 2W -> 3B#
      *       1B -> 0W
-     *
      */
     @Test
     fun twoMoveAvoidableMate() {
         val list = createWinList(
             mateIndex = 3,
             listOf(1),
-            listOf(2),
+            listOf(0, 2),
             listOf(3),
             emptyList()
         )
 
         assertEquals(WinIndex.Avoidable, list[0].winIndexList[0])
     }
+
+    /**
+     * 0W -> 1B -> 2W -> 3B#
+     * 0W -> 3B#
+     *
+     */
+    @Test
+    fun oneMoveMateWithOptions() {
+        val list = createWinList(
+            mateIndex = 3,
+            listOf(1, 3),
+            listOf(2),
+            listOf(3),
+            emptyList()
+        )
+
+        assertEquals(WinIndex.Forced(1, 1), list[0].winIndexList[0])
+    }
+
 
     private fun createWinList(
         mateIndex: Int,
