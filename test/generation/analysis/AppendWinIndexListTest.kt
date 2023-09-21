@@ -19,7 +19,7 @@ class AppendWinIndexListTest {
             emptyList()
         )
 
-        assertEquals(WinIndex(1, 1), list[0].winIndexList[0])
+        assertEquals(WinIndex.Forced(1, 1), list[0].winIndexList[0])
     }
 
     /**
@@ -35,7 +35,7 @@ class AppendWinIndexListTest {
             emptyList()
         )
 
-        assertEquals(WinIndex(1, 3), list[0].winIndexList[0])
+        assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList[0])
     }
 
     /**
@@ -53,7 +53,7 @@ class AppendWinIndexListTest {
             listOf(3)
         )
 
-        assertEquals(WinIndex(1, 3), list[0].winIndexList[0])
+        assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList[0])
     }
 
     /**
@@ -73,7 +73,7 @@ class AppendWinIndexListTest {
             listOf(2, 4)
         )
 
-        assertEquals(WinIndex(1, 3), list[0].winIndexList[0])
+        assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList[0])
     }
 
     /**
@@ -93,9 +93,8 @@ class AppendWinIndexListTest {
             listOf(0, 2)
         )
 
-        assertEquals(WinIndex(1, 3), list[0].winIndexList[0])
+        assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList[0])
     }
-
 
     /**
      * 0W -> 1B -> 2W -> 3B -> 4W -> 5B#
@@ -112,7 +111,7 @@ class AppendWinIndexListTest {
             emptyList()
         )
 
-        assertEquals(WinIndex(1, 5), list[0].winIndexList[0])
+        assertEquals(WinIndex.Forced(1, 5), list[0].winIndexList[0])
     }
 
     private fun createWinList(

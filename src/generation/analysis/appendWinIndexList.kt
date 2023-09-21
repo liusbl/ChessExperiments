@@ -41,7 +41,7 @@ private fun appendImmediateCheckmates(graphList: List<IndexGraph>) {
             graph.nextIndexList.forEach loop@{ nextIndex ->
                 val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
                 if (nextGraph.checkState == CheckState.BLACK_IN_CHECKMATE) {
-                    graph.winIndexList.add(IndexGraph.WinIndex(nextIndex = nextIndex, pliesUntilCheckmate = 1))
+                    graph.winIndexList.add(IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = 1))
                 }
             }
         }
@@ -53,7 +53,7 @@ private fun appendImmediateDraws(graphList: List<IndexGraph>) {
             graph.nextIndexList.forEach loop@{ nextIndex ->
                 val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
                 if (nextGraph.checkState == CheckState.DRAW) {
-                    graph.winIndexList.add(IndexGraph.WinIndex(nextIndex = nextIndex, pliesUntilCheckmate = 1))
+                    graph.winIndexList.add(IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = 1))
                 }
             }
         }
@@ -80,11 +80,11 @@ private fun handleBlackMoves(graphList: List<IndexGraph>) {
                 // TODO not sure about this. Is taking the max until checkmate really the right approach? Maybe?
                 val maxPliesUntilCheckmate = graph.nextIndexList.map { nextIndex ->
                     val nextGraph = graphList.find { it.index == nextIndex }
-                    nextGraph?.winIndexList?.map { it.pliesUntilCheckmate } ?: listOf(Int.MIN_VALUE)// TODO
+                    nextGraph?.winIndexList?.filterIsInstance<IndexGraph.WinIndex.Forced>()?.map { it.pliesUntilCheckmate } ?: listOf(Int.MIN_VALUE)// TODO
                 }.flatten().max()
                 graph.nextIndexList.all { nextIndex ->
                     graph.winIndexList.add(
-                        IndexGraph.WinIndex(
+                        IndexGraph.WinIndex.Forced(
                             nextIndex = nextIndex,
                             pliesUntilCheckmate = maxPliesUntilCheckmate + 1
                         )
@@ -112,11 +112,11 @@ private fun handleWhiteMoves(graphList: List<IndexGraph>) {
                 // TODO not sure about this. Is taking the max until checkmate really the right approach? Maybe?
                 val minPliesUntilCheckmate = graph.nextIndexList.map { nextIndex ->
                     val nextGraph = graphList.find { it.index == nextIndex }
-                    nextGraph?.winIndexList?.map { it.pliesUntilCheckmate } ?: listOf(Int.MAX_VALUE)// TODO
+                    nextGraph?.winIndexList?.filterIsInstance<IndexGraph.WinIndex.Forced>()?.map { it.pliesUntilCheckmate } ?: listOf(Int.MAX_VALUE)// TODO
                 }.flatten().min()
                 graph.nextIndexList.all { nextIndex ->
                     graph.winIndexList.add(
-                        IndexGraph.WinIndex(
+                        IndexGraph.WinIndex.Forced(
                             nextIndex = nextIndex,
                             pliesUntilCheckmate = minPliesUntilCheckmate + 1
                         )
