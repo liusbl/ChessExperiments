@@ -42,6 +42,8 @@ private fun appendImmediateCheckmates(graphList: List<IndexGraph>) {
                 val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
                 if (nextGraph.checkState == CheckState.BLACK_IN_CHECKMATE) {
                     graph.winIndexList.add(IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = 1))
+                } else {
+                    graph.winIndexList.add(IndexGraph.WinIndex.Unknown)
                 }
             }
         }
@@ -54,6 +56,8 @@ private fun appendImmediateDraws(graphList: List<IndexGraph>) {
                 val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
                 if (nextGraph.checkState == CheckState.DRAW) {
                     graph.winIndexList.add(IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = 1))
+                } else {
+                    graph.winIndexList.add(IndexGraph.WinIndex.Unknown)
                 }
             }
         }
@@ -97,7 +101,6 @@ private fun handleBlackMoves(graphList: List<IndexGraph>) {
 private fun handleWhiteMoves(graphList: List<IndexGraph>) {
     graphList.filter { it.move == Move.WHITE }
         .forEach { graph ->
-            if (graph.winIndexList.isNotEmpty()) return@forEach
             if (graph.nextIndexList.isEmpty()) return@forEach
 
             val anyMoveWins = graph.nextIndexList.any { nextIndex ->

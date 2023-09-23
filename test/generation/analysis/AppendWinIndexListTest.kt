@@ -149,7 +149,6 @@ class AppendWinIndexListTest {
         assertEquals(WinIndex.Forced(1, 1), list[0].winIndexList[0])
     }
 
-
     private fun createWinList(
         mateIndex: Int,
         vararg eachGraphNextIndexList: List<Int>

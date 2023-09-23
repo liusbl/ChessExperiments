@@ -27,9 +27,13 @@ data class IndexGraph(
      * For Black, this represents the moves that take the longest until checkmate.
      */
     sealed interface WinIndex {
+        object Unknown : WinIndex
+
         data class Forced(val nextIndex: Int, val pliesUntilCheckmate: Int) : WinIndex
 
         object Avoidable : WinIndex
+
+        // Consider if Impossible is an option?
     }
 }
 
