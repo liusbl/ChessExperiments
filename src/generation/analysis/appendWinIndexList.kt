@@ -37,14 +37,14 @@ private fun whiteMoves(graphList: List<IndexGraph>) {
             graph.nextIndexList.forEach loop@{ nextIndex ->
                 val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
                 val nextWinIndexList = nextGraph.winIndexList
-                val winIndex = if (nextGraph.checkState == CheckState.BLACK_IN_CHECKMATE) {
-                    WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = 1)
-                } else if (graph.move == Move.BLACK && nextWinIndexList.isNotEmpty() && nextWinIndexList.all { it is WinIndex.Forced }) {
-                    WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
-                } else if (graph.move == Move.WHITE && nextWinIndexList.isNotEmpty() && nextWinIndexList.any { it is WinIndex.Forced }) {
-                    WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
-                } else {
-                    WinIndex.Unknown(nextIndex)
+                val winIndex = when {
+                    nextGraph.checkState == CheckState.BLACK_IN_CHECKMATE ->
+                        WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = 1)
+                    graph.move == Move.BLACK && nextWinIndexList.isNotEmpty() && nextWinIndexList.all { it is WinIndex.Forced } ->
+                        WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+                    graph.move == Move.WHITE && nextWinIndexList.isNotEmpty() && nextWinIndexList.any { it is WinIndex.Forced } ->
+                        WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+                    else -> WinIndex.Unknown(nextIndex)
                 }
                 graph.winIndexList.set(winIndex)
             }
