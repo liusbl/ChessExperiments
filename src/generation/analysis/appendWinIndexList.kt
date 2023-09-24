@@ -2,6 +2,7 @@ package generation.analysis
 
 import generation.models.CheckState
 import generation.models.IndexGraph
+import generation.models.IndexGraph.WinIndex
 import generation.models.Move
 
 /**
@@ -36,13 +37,13 @@ private fun whiteMoves(graphList: List<IndexGraph>) {
             graph.nextIndexList.forEach loop@{ nextIndex ->
                 val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
                 val winIndex = if (nextGraph.checkState == CheckState.BLACK_IN_CHECKMATE) {
-                    IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = 1)
-                } else if (graph.move == Move.BLACK && nextGraph.winIndexList.isNotEmpty() && nextGraph.winIndexList.all { it is IndexGraph.WinIndex.Forced }) {
-                    IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
-                } else if (graph.move == Move.WHITE && nextGraph.winIndexList.isNotEmpty() && nextGraph.winIndexList.any { it is IndexGraph.WinIndex.Forced }) {
-                    IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+                    WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = 1)
+                } else if (graph.move == Move.BLACK && nextGraph.winIndexList.isNotEmpty() && nextGraph.winIndexList.all { it is WinIndex.Forced }) {
+                    WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+                } else if (graph.move == Move.WHITE && nextGraph.winIndexList.isNotEmpty() && nextGraph.winIndexList.any { it is WinIndex.Forced }) {
+                    WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
                 } else {
-                    IndexGraph.WinIndex.Unknown(nextIndex)
+                    WinIndex.Unknown(nextIndex)
                 }
                 graph.winIndexList.set(winIndex)
             }
@@ -50,9 +51,9 @@ private fun whiteMoves(graphList: List<IndexGraph>) {
 }
 
 fun IndexGraph.minimumForcedPlies(): Int =
-    winIndexList.filterIsInstance<IndexGraph.WinIndex.Forced>().minBy { it.pliesUntilCheckmate }.pliesUntilCheckmate
+    winIndexList.filterIsInstance<WinIndex.Forced>().minBy { it.pliesUntilCheckmate }.pliesUntilCheckmate
 
-private fun MutableSet<IndexGraph.WinIndex>.set(winIndex: IndexGraph.WinIndex) {
+private fun MutableSet<WinIndex>.set(winIndex: WinIndex) {
     val matchingIndex = indexOfFirst { it.nextIndex == winIndex.nextIndex }
     if (matchingIndex != -1) {
         remove(toList()[matchingIndex])
