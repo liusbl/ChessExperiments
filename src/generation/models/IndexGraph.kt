@@ -10,7 +10,7 @@ data class IndexGraph(
     val parentIndexList: MutableList<Int>,
     val nextIndexList: List<Int>,
     val nextGraphList: MutableList<IndexGraph>,
-    val winIndexList: MutableList<WinIndex>
+    val winIndexList: MutableSet<WinIndex>
 ) {
     override fun toString() =
         "IndexGraph(index=$index, " +
@@ -23,15 +23,15 @@ data class IndexGraph(
             "\nwinIndexList=$winIndexList)\n"
 
     /**
-     * For White, this represents the moves that it takes to checkmate black.
-     * For Black, this represents the moves that take the longest until checkmate.
+     * This is always a win from Whites perspective, even if assign to Black move.
      */
     sealed interface WinIndex {
-        object Unknown : WinIndex
+        val nextIndex: Int
+        data class Unknown(override val nextIndex: Int) : WinIndex
 
-        data class Forced(val nextIndex: Int, val pliesUntilCheckmate: Int) : WinIndex
+        data class Forced(override val nextIndex: Int, val pliesUntilCheckmate: Int) : WinIndex
 
-        object Avoidable : WinIndex
+        data class Avoidable(override val nextIndex: Int) : WinIndex
 
         // Consider if Impossible is an option?
     }
@@ -48,5 +48,5 @@ fun IndexGraph(board: IndexBoard) = IndexGraph(
     parentIndexList = mutableListOf(),
     nextIndexList = board.nextBoardIndexList,
     nextGraphList = mutableListOf(),
-    winIndexList = mutableListOf(),
+    winIndexList = mutableSetOf(),
 )
