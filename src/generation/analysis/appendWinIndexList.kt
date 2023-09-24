@@ -37,12 +37,10 @@ private fun whiteMoves(graphList: List<IndexGraph>) {
                 val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
                 val winIndex = if (nextGraph.checkState == CheckState.BLACK_IN_CHECKMATE) {
                     IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = 1)
-                } else if (graph.move == Move.BLACK && nextGraph.winIndexList.isNotEmpty() && nextGraph.winIndexList.all { it is IndexGraph.WinIndex.Forced }) { // For Black
-                    val minPlies = nextGraph.winIndexList.filterIsInstance<IndexGraph.WinIndex.Forced>().minBy { it.pliesUntilCheckmate }.pliesUntilCheckmate
-                    IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = minPlies + 1)
-                } else if (graph.move == Move.WHITE && nextGraph.winIndexList.isNotEmpty() && nextGraph.winIndexList.any { it is IndexGraph.WinIndex.Forced }) { // For White
-                    val minPlies = nextGraph.winIndexList.filterIsInstance<IndexGraph.WinIndex.Forced>().minBy { it.pliesUntilCheckmate }.pliesUntilCheckmate
-                    IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = minPlies + 1)
+                } else if (graph.move == Move.BLACK && nextGraph.winIndexList.isNotEmpty() && nextGraph.winIndexList.all { it is IndexGraph.WinIndex.Forced }) {
+                    IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+                } else if (graph.move == Move.WHITE && nextGraph.winIndexList.isNotEmpty() && nextGraph.winIndexList.any { it is IndexGraph.WinIndex.Forced }) {
+                    IndexGraph.WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
                 } else {
                     IndexGraph.WinIndex.Unknown(nextIndex)
                 }
@@ -50,6 +48,9 @@ private fun whiteMoves(graphList: List<IndexGraph>) {
             }
         }
 }
+
+fun IndexGraph.minimumForcedPlies(): Int =
+    winIndexList.filterIsInstance<IndexGraph.WinIndex.Forced>().minBy { it.pliesUntilCheckmate }.pliesUntilCheckmate
 
 private fun MutableSet<IndexGraph.WinIndex>.set(winIndex: IndexGraph.WinIndex) {
     val matchingIndex = indexOfFirst { it.nextIndex == winIndex.nextIndex }
