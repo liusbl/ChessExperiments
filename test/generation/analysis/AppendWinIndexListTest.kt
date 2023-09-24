@@ -146,7 +146,7 @@ class AppendWinIndexListTest {
             emptyList()
         )
 
-        assertEquals(WinIndex.Forced(1, 1), list[0].winIndexList.toList()[0])
+        assertEquals(WinIndex.Forced(3, 1), list[0].winIndexList.toList()[0])
     }
 
     private fun createWinList(

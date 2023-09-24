@@ -47,6 +47,9 @@ private fun whiteMoves(graphList: List<IndexGraph>) {
             }
             graph.winIndexList.set(winIndex)
         }
+        val sortedWinIndexList = graph.winIndexList.sortedBy { (it as? WinIndex.Forced)?.pliesUntilCheckmate }
+        graph.winIndexList.clear()
+        graph.winIndexList.addAll(sortedWinIndexList)
     }
 }
 
