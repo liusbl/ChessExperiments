@@ -33,7 +33,7 @@ class AppendWinIndexListTest {
      */
     @Test
     fun twoMoveMate() {
-        val list = createWinList(
+        val list = createList(
             mateIndexList = listOf(3),
             mapOf(
                 0 to listOf(1),
@@ -43,7 +43,14 @@ class AppendWinIndexListTest {
             )
         )
 
-        assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList.toList()[0])
+        val expected = list.toList()
+        expected[0].winIndexList.add(WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 3))
+        expected[1].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2))
+        expected[2].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 1))
+
+        appendWinIndexList(list)
+
+        assertEquals(expected, list)
     }
 
     /**
