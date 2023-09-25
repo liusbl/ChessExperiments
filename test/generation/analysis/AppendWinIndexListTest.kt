@@ -13,15 +13,19 @@ class AppendWinIndexListTest {
      */
     @Test
     fun singleMoveMate() {
-        val list = createWinList(
+        val list = createList(
             mateIndexList = listOf(1),
             mapOf(
                 0 to listOf(1),
                 1 to emptyList()
             )
         )
+        val expected = list.toList()
+        expected[0].winIndexList.add(WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 1))
 
-        assertEquals(WinIndex.Forced(1, 1), list[0].winIndexList.toList()[0])
+        appendWinIndexList(list)
+
+        assertEquals(expected, list)
     }
 
     /**
@@ -252,14 +256,17 @@ class AppendWinIndexListTest {
     private fun createWinList(
         mateIndexList: List<Int>,
         nextIndexMap: Map<Int, List<Int>>
-    ): List<IndexGraph> = nextIndexMap.map { (index, nextIndexList) ->
-        IndexGraph(
-            index = index,
-            move = if (index % 2 == 0) Move.WHITE else Move.BLACK,
-            checkState = if (mateIndexList.contains(index)) CheckState.BLACK_IN_CHECKMATE else CheckState.NONE,
-            nextIndexList = nextIndexList
-        )
-    }.also { appendWinIndexList(it) }
+    ): List<IndexGraph> = createList(mateIndexList, nextIndexMap).also { appendWinIndexList(it) }
+
+    private fun createList(mateIndexList: List<Int>, nextIndexMap: Map<Int, List<Int>>) =
+        nextIndexMap.map { (index, nextIndexList) ->
+            IndexGraph(
+                index = index,
+                move = if (index % 2 == 0) Move.WHITE else Move.BLACK,
+                checkState = if (mateIndexList.contains(index)) CheckState.BLACK_IN_CHECKMATE else CheckState.NONE,
+                nextIndexList = nextIndexList
+            )
+        }
 
     private fun IndexGraph(
         index: Int,
