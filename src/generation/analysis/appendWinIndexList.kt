@@ -20,7 +20,7 @@ import generation.models.Move
 fun appendWinIndexList(graphList: List<IndexGraph>) {
     initializeWinIndexList(graphList)
     appendImmediateCheckmate(graphList)
-    appendForcingMoves(graphList)
+    calculateMoves(graphList)
     replaceUnknownWithAvoidable(graphList)
 }
 
@@ -43,10 +43,10 @@ private fun appendImmediateCheckmate(graphList: List<IndexGraph>) {
     }
 }
 
-private fun appendForcingMoves(graphList: List<IndexGraph>) {
+private fun calculateMoves(graphList: List<IndexGraph>) {
     var lastWinIndexList = graphList.map { it.winIndexList.toList() }
     while (true) {
-        whiteMoves(graphList)
+        appendForcingMoves(graphList)
 
         val newWinIndexList = graphList.map { it.winIndexList.toList() }
         if (lastWinIndexList == newWinIndexList) {
@@ -57,7 +57,7 @@ private fun appendForcingMoves(graphList: List<IndexGraph>) {
     }
 }
 
-private fun whiteMoves(graphList: List<IndexGraph>) {
+private fun appendForcingMoves(graphList: List<IndexGraph>) {
     graphList.forEach { graph ->
         val nextGraphList = graph.nextIndexList.mapNotNull { nextIndex -> graphList.find { it.index == nextIndex } }
         when (graph.move) {
