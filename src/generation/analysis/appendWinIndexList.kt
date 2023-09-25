@@ -60,22 +60,25 @@ private fun appendForcingMoves(graphList: List<IndexGraph>) {
 private fun whiteMoves(graphList: List<IndexGraph>) {
     graphList.forEach { graph ->
         val nextGraphList = graph.nextIndexList.mapNotNull { nextIndex -> graphList.find { it.index == nextIndex } }
-        if (graph.move == Move.BLACK) {
-            val allForced = nextGraphList.flatMap { it.winIndexList }.all { it is WinIndex.Forced }
-            if (allForced) {
-                graph.nextIndexList.forEach loop@{ nextIndex ->
-                    val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
-                    val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
-                    graph.winIndexList.set(winIndex)
+        when (graph.move) {
+            Move.BLACK -> {
+                val allForced = nextGraphList.flatMap { it.winIndexList }.all { it is WinIndex.Forced }
+                if (allForced) {
+                    graph.nextIndexList.forEach loop@{ nextIndex ->
+                        val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
+                        val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+                        graph.winIndexList.set(winIndex)
+                    }
                 }
             }
-        } else {
-            val anyForced = nextGraphList.flatMap { it.winIndexList }.any { it is WinIndex.Forced }
-            if (anyForced) {
-                graph.nextIndexList.forEach loop@{ nextIndex ->
-                    val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
-                    val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
-                    graph.winIndexList.set(winIndex)
+            Move.WHITE -> {
+                val anyForced = nextGraphList.flatMap { it.winIndexList }.any { it is WinIndex.Forced }
+                if (anyForced) {
+                    graph.nextIndexList.forEach loop@{ nextIndex ->
+                        val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
+                        val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+                        graph.winIndexList.set(winIndex)
+                    }
                 }
             }
         }
