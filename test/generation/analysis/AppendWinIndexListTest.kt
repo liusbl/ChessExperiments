@@ -58,7 +58,7 @@ class AppendWinIndexListTest {
      */
     @Test
     fun threeMoveMate() {
-        val list = createWinList(
+        val list = createList(
             mateIndexList = listOf(5),
             mapOf(
                 0 to listOf(1),
@@ -70,7 +70,16 @@ class AppendWinIndexListTest {
             )
         )
 
-        assertEquals(WinIndex.Forced(1, 5), list[0].winIndexList.toList()[0])
+        val expected = list.toList()
+        expected[0].winIndexList.add(WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 5))
+        expected[1].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 4))
+        expected[3].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 3))
+        expected[4].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2))
+        expected[5].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 1))
+
+        appendWinIndexList(list)
+
+        assertEquals(expected, list)
     }
 
     /**
