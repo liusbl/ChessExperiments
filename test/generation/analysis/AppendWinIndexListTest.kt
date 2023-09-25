@@ -14,9 +14,11 @@ class AppendWinIndexListTest {
     @Test
     fun singleMoveMate() {
         val list = createWinList(
-            mateIndex = 1,
-            listOf(1),
-            emptyList()
+            mateIndexList = listOf(1),
+            mapOf(
+                0 to listOf(1),
+                1 to emptyList()
+            )
         )
 
         assertEquals(WinIndex.Forced(1, 1), list[0].winIndexList.toList()[0])
@@ -28,11 +30,13 @@ class AppendWinIndexListTest {
     @Test
     fun twoMoveMate() {
         val list = createWinList(
-            mateIndex = 3,
-            listOf(1),
-            listOf(2),
-            listOf(3),
-            emptyList()
+            mateIndexList = listOf(3),
+            mapOf(
+                0 to listOf(1),
+                1 to listOf(2),
+                2 to listOf(3),
+                3 to emptyList()
+            )
         )
 
         assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList.toList()[0])
@@ -44,13 +48,15 @@ class AppendWinIndexListTest {
     @Test
     fun threeMoveMate() {
         val list = createWinList(
-            mateIndex = 5,
-            listOf(1),
-            listOf(2),
-            listOf(3),
-            listOf(4),
-            listOf(5),
-            emptyList()
+            mateIndexList = listOf(5),
+            mapOf(
+                0 to listOf(1),
+                1 to listOf(2),
+                2 to listOf(3),
+                3 to listOf(4),
+                4 to listOf(5),
+                5 to emptyList()
+            )
         )
 
         assertEquals(WinIndex.Forced(1, 5), list[0].winIndexList.toList()[0])
@@ -63,12 +69,14 @@ class AppendWinIndexListTest {
     @Test
     fun twoMoveTwoBranchMate() {
         val list = createWinList(
-            mateIndex = 3,
-            listOf(1),
-            listOf(2, 4),
-            listOf(3),
-            emptyList(),
-            listOf(3)
+            mateIndexList = listOf(3),
+            mapOf(
+                0 to listOf(1),
+                1 to listOf(2, 4),
+                2 to listOf(3),
+                3 to emptyList(),
+                4 to listOf(3)
+            )
         )
 
         assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList.toList()[0])
@@ -82,13 +90,15 @@ class AppendWinIndexListTest {
     @Test
     fun twoMoveThreeBranchMate() {
         val list = createWinList(
-            mateIndex = 3,
-            listOf(1),
-            listOf(2, 4),
-            listOf(3),
-            emptyList(),
-            listOf(3),
-            listOf(2, 4)
+            mateIndexList = listOf(3),
+            mapOf(
+                0 to listOf(1),
+                1 to listOf(2, 4),
+                2 to listOf(3),
+                3 to emptyList(),
+                4 to listOf(3),
+                5 to listOf(2, 4)
+            )
         )
 
         assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList.toList()[0])
@@ -102,13 +112,15 @@ class AppendWinIndexListTest {
     @Test
     fun twoMoveOneBadBranchMate() {
         val list = createWinList(
-            mateIndex = 3,
-            listOf(1),
-            listOf(2, 4),
-            listOf(3),
-            emptyList(),
-            listOf(3),
-            listOf(0, 2)
+            mateIndexList = listOf(3),
+            mapOf(
+                0 to listOf(1),
+                1 to listOf(2, 4),
+                2 to listOf(3),
+                3 to emptyList(),
+                4 to listOf(3),
+                5 to listOf(0, 2)
+            )
         )
 
         assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList.toList()[0])
@@ -121,11 +133,13 @@ class AppendWinIndexListTest {
     @Test
     fun twoMoveAvoidableMate() {
         val list = createWinList(
-            mateIndex = 3,
-            listOf(1),
-            listOf(0, 2),
-            listOf(3),
-            emptyList()
+            mateIndexList = listOf(3),
+            mapOf(
+                0 to listOf(1),
+                1 to listOf(0, 2),
+                2 to listOf(3),
+                3 to emptyList()
+            )
         )
 
         assertEquals(WinIndex.Avoidable(nextIndex = 1), list[0].winIndexList.toList()[0])
@@ -140,11 +154,13 @@ class AppendWinIndexListTest {
     @Test
     fun oneMoveMateWithOptions() {
         val list = createWinList(
-            mateIndex = 3,
-            listOf(1, 3),
-            listOf(2),
-            listOf(3),
-            emptyList()
+            mateIndexList = listOf(3),
+            mapOf(
+                0 to listOf(1, 3),
+                1 to listOf(2),
+                2 to listOf(3),
+                3 to emptyList()
+            )
         )
 
         assertEquals(WinIndex.Forced(3, 1), list[0].winIndexList.toList()[0])
@@ -158,7 +174,7 @@ class AppendWinIndexListTest {
 //    @Test
 //    fun threeMoveAvoidableMate() {
 //        val list = createWinList(
-//            mateIndex = 7,
+//            mateIndexList = listOf(7),
 //            listOf(1),
 //            listOf(2, 6),
 //            listOf(3),
@@ -241,18 +257,6 @@ class AppendWinIndexListTest {
             index = index,
             move = if (index % 2 == 0) Move.WHITE else Move.BLACK,
             checkState = if (mateIndexList.contains(index)) CheckState.BLACK_IN_CHECKMATE else CheckState.NONE,
-            nextIndexList = nextIndexList
-        )
-    }.also { appendWinIndexList(it) }
-
-    private fun createWinList(
-        mateIndex: Int,
-        vararg eachGraphNextIndexList: List<Int>
-    ): List<IndexGraph> = eachGraphNextIndexList.mapIndexed { index, nextIndexList ->
-        IndexGraph(
-            index = index,
-            move = if (index % 2 == 0) Move.WHITE else Move.BLACK,
-            checkState = if (index == mateIndex) CheckState.BLACK_IN_CHECKMATE else CheckState.NONE,
             nextIndexList = nextIndexList
         )
     }.also { appendWinIndexList(it) }
