@@ -128,7 +128,8 @@ class AppendWinIndexListTest {
             emptyList()
         )
 
-        assertEquals(WinIndex.Avoidable(nextIndex = 0), list[0].winIndexList.toList()[0])
+        assertEquals(WinIndex.Avoidable(nextIndex = 1), list[0].winIndexList.toList()[0])
+        assertEquals(WinIndex.Avoidable(nextIndex = 0), list[1].winIndexList.toList()[0])
     }
 
     /**

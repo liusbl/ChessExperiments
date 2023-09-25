@@ -18,6 +18,32 @@ import generation.models.Move
  * Don't forget to handle STALEMATES!
  */
 fun appendWinIndexList(graphList: List<IndexGraph>) {
+    initializeWinIndexList(graphList)
+    appendImmediateCheckmate(graphList)
+    appendForcingMoves(graphList)
+    replaceUnknownWithAvoidable(graphList)
+}
+
+private fun initializeWinIndexList(graphList: List<IndexGraph>) {
+    graphList.forEach { graph ->
+        graph.nextIndexList.forEach { nextIndex ->
+            graph.winIndexList.add(WinIndex.Unknown(nextIndex))
+        }
+    }
+}
+
+private fun appendImmediateCheckmate(graphList: List<IndexGraph>) {
+    graphList.forEach { graph ->
+        graph.nextIndexList.forEach loop@{ nextIndex ->
+            val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
+            if (nextGraph.checkState == CheckState.BLACK_IN_CHECKMATE) {
+                graph.winIndexList.set(WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = 1))
+            }
+        }
+    }
+}
+
+private fun appendForcingMoves(graphList: List<IndexGraph>) {
     var lastWinIndexList = graphList.map { it.winIndexList.toList() }
     while (true) {
         whiteMoves(graphList)
@@ -33,20 +59,27 @@ fun appendWinIndexList(graphList: List<IndexGraph>) {
 
 private fun whiteMoves(graphList: List<IndexGraph>) {
     graphList.forEach { graph ->
-        graph.nextIndexList.forEach loop@{ nextIndex ->
-            val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
-            val nextWinIndexList = nextGraph.winIndexList
-            val winIndex = when {
-                nextGraph.checkState == CheckState.BLACK_IN_CHECKMATE ->
-                    WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = 1)
-                graph.move == Move.BLACK && nextWinIndexList.isNotEmpty() && nextWinIndexList.all { it is WinIndex.Forced } ->
-                    WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
-                graph.move == Move.WHITE && nextWinIndexList.isNotEmpty() && nextWinIndexList.any { it is WinIndex.Forced } ->
-                    WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
-                else -> WinIndex.Unknown(nextIndex)
+        val nextGraphList = graph.nextIndexList.mapNotNull { nextIndex -> graphList.find { it.index == nextIndex } }
+        if (graph.move == Move.BLACK) {
+            val allForced = nextGraphList.flatMap { it.winIndexList }.all { it is WinIndex.Forced }
+            if (allForced) {
+                graph.nextIndexList.forEach loop@{ nextIndex ->
+                    val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
+                    val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+                    graph.winIndexList.set(winIndex)
+                }
             }
-            graph.winIndexList.set(winIndex)
+        } else {
+            val anyForced = nextGraphList.flatMap { it.winIndexList }.any { it is WinIndex.Forced }
+            if (anyForced) {
+                graph.nextIndexList.forEach loop@{ nextIndex ->
+                    val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
+                    val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+                    graph.winIndexList.set(winIndex)
+                }
+            }
         }
+
         val sortedWinIndexList = graph.winIndexList.sortedBy { (it as? WinIndex.Forced)?.pliesUntilCheckmate }
         graph.winIndexList.clear()
         graph.winIndexList.addAll(sortedWinIndexList)
@@ -54,7 +87,20 @@ private fun whiteMoves(graphList: List<IndexGraph>) {
 }
 
 fun IndexGraph.minimumForcedPlies(): Int =
-    winIndexList.filterIsInstance<WinIndex.Forced>().minBy { it.pliesUntilCheckmate }.pliesUntilCheckmate
+    winIndexList.filterIsInstance<WinIndex.Forced>().minByOrNull { it.pliesUntilCheckmate }?.pliesUntilCheckmate ?: 0
+private fun replaceUnknownWithAvoidable(graphList: List<IndexGraph>) {
+    graphList.forEach { graph ->
+        val newWinIndexList = graph.winIndexList.map { winIndex ->
+            if (winIndex is WinIndex.Unknown) {
+                WinIndex.Avoidable(winIndex.nextIndex)
+            } else {
+                winIndex
+            }
+        }
+        graph.winIndexList.clear()
+        graph.winIndexList.addAll(newWinIndexList)
+    }
+}
 
 private fun MutableSet<WinIndex>.set(winIndex: WinIndex) {
     val matchingIndex = indexOfFirst { it.nextIndex == winIndex.nextIndex }
