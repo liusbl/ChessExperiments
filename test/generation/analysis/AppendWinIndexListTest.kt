@@ -117,24 +117,42 @@ class AppendWinIndexListTest {
 
     /**
      * 0W -> 1B -> 2W -> 3B#
-     *       5B -> 2W -> 3B#
+     * 0W -> 5B -> 2W
      *       5B -> 4W -> 3B#
      */
     @Test
     fun twoMoveThreeBranchMate() {
-        val list = createWinList(
+        val list = createList(
             mateIndexList = listOf(3),
             mapOf(
-                0 to listOf(1),
-                1 to listOf(2, 4),
+                0 to listOf(1, 5),
+                1 to listOf(2),
                 2 to listOf(3),
-                3 to emptyList(),
-                4 to listOf(3),
-                5 to listOf(2, 4)
+                5 to listOf(2, 4),
+                4 to listOf(3)
             )
         )
 
-        assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList.toList()[0])
+        val expected = list.deepCopy()
+        expected.winIndexList(0).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 3),
+                WinIndex.Forced(nextIndex = 5, pliesUntilCheckmate = 3)
+            )
+        )
+        expected.winIndexList(1).add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2))
+        expected.winIndexList(2).add(WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 1))
+        expected.winIndexList(5).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2),
+                WinIndex.Forced(nextIndex = 4, pliesUntilCheckmate = 2)
+            )
+        )
+        expected.winIndexList(4).add(WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 1))
+
+        appendWinIndexList(list)
+
+        assertEquals(expected, list)
     }
 
     /**
@@ -315,6 +333,8 @@ class AppendWinIndexListTest {
         winIndexList = mutableSetOf(), // Doesn't matter
     )
 }
+
+private fun List<IndexGraph>.winIndexList(index: Int) = find { it.index == index }!!.winIndexList
 
 private fun List<IndexGraph>.deepCopy(): List<IndexGraph> =
     map { it.copy(winIndexList = it.winIndexList.toMutableSet()) }
