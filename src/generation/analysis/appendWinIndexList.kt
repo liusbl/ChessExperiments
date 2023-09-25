@@ -64,11 +64,7 @@ private fun appendForcingMoves(graphList: List<IndexGraph>) {
             Move.BLACK -> {
                 val allForced = nextGraphList.flatMap { it.winIndexList }.all { it is WinIndex.Forced }
                 if (allForced) {
-                    graph.nextIndexList.forEach loop@{ nextIndex ->
-                        val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
-                        val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
-                        graph.winIndexList.set(winIndex)
-                    }
+                    setAllForcingMoves(graph, graphList)
                 }
             }
             Move.WHITE -> {
@@ -86,6 +82,14 @@ private fun appendForcingMoves(graphList: List<IndexGraph>) {
         val sortedWinIndexList = graph.winIndexList.sortedBy { (it as? WinIndex.Forced)?.pliesUntilCheckmate }
         graph.winIndexList.clear()
         graph.winIndexList.addAll(sortedWinIndexList)
+    }
+}
+
+private fun setAllForcingMoves(graph: IndexGraph, graphList: List<IndexGraph>) {
+    graph.nextIndexList.forEach loop@{ nextIndex ->
+        val nextGraph = graphList.find { it.index == nextIndex } ?: return@loop
+        val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+        graph.winIndexList.set(winIndex)
     }
 }
 
