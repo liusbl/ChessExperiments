@@ -64,33 +64,34 @@ private fun appendForcingMoves(graphList: List<IndexGraph>) {
             Move.BLACK -> {
                 val allForced = nextGraphList.flatMap { it.winIndexList }.all { it is WinIndex.Forced }
                 if (allForced) {
-                    setAllForcingMoves(graph, graphList)
+                    graph.nextIndexList.forEach { nextIndex ->
+                        val nextGraph = graphList.find { it.index == nextIndex } ?: return
+                        val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+                        graph.winIndexList.set(winIndex)
+                    }
                 }
             }
+
             Move.WHITE -> {
-                val anyForced = nextGraphList.flatMap { it.winIndexList }.any { it is WinIndex.Forced }
-                if (anyForced) {
-                    setAllForcingMoves(graph, graphList)
+                nextGraphList.forEach { nextGraph ->
+                    nextGraph.winIndexList.filterIsInstance<WinIndex.Forced>().forEach { winIndex ->
+                        val newWinIndex = WinIndex.Forced(nextIndex = nextGraph.index, pliesUntilCheckmate = winIndex.pliesUntilCheckmate + 1)
+                        graph.winIndexList.set(newWinIndex)
+                    }
                 }
             }
         }
 
-        val sortedWinIndexList = graph.winIndexList.sortedBy { (it as? WinIndex.Forced)?.pliesUntilCheckmate }
+        // Prioritize Forced indexed, then sort by plies
+        val sortedWinIndexList = graph.winIndexList.sortedWith(compareBy({ it !is WinIndex.Forced }, { (it as? WinIndex.Forced)?.pliesUntilCheckmate }))
         graph.winIndexList.clear()
         graph.winIndexList.addAll(sortedWinIndexList)
     }
 }
 
-private fun setAllForcingMoves(graph: IndexGraph, graphList: List<IndexGraph>) {
-    graph.nextIndexList.forEach { nextIndex ->
-        val nextGraph = graphList.find { it.index == nextIndex } ?: return
-        val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
-        graph.winIndexList.set(winIndex)
-    }
-}
-
 fun IndexGraph.minimumForcedPlies(): Int =
     winIndexList.filterIsInstance<WinIndex.Forced>().minByOrNull { it.pliesUntilCheckmate }?.pliesUntilCheckmate ?: 0
+
 private fun replaceUnknownWithAvoidable(graphList: List<IndexGraph>) {
     graphList.forEach { graph ->
         val newWinIndexList = graph.winIndexList.map { winIndex ->
