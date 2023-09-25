@@ -20,7 +20,7 @@ class AppendWinIndexListTest {
                 1 to emptyList()
             )
         )
-        val expected = list.toList()
+        val expected = list.deepCopy()
         expected[0].winIndexList.add(WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 1))
 
         appendWinIndexList(list)
@@ -43,10 +43,10 @@ class AppendWinIndexListTest {
             )
         )
 
-        val expected = list.toList()
+        val expected = list.deepCopy()
         expected[0].winIndexList.add(WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 3))
         expected[1].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2))
-        expected[2].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 1))
+        expected[2].winIndexList.add(WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 1))
 
         appendWinIndexList(list)
 
@@ -70,12 +70,12 @@ class AppendWinIndexListTest {
             )
         )
 
-        val expected = list.toList()
+        val expected = list.deepCopy()
         expected[0].winIndexList.add(WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 5))
         expected[1].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 4))
-        expected[3].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 3))
-        expected[4].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2))
-        expected[5].winIndexList.add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 1))
+        expected[2].winIndexList.add(WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 3))
+        expected[3].winIndexList.add(WinIndex.Forced(nextIndex = 4, pliesUntilCheckmate = 2))
+        expected[4].winIndexList.add(WinIndex.Forced(nextIndex = 5, pliesUntilCheckmate = 1))
 
         appendWinIndexList(list)
 
@@ -88,7 +88,7 @@ class AppendWinIndexListTest {
      */
     @Test
     fun twoMoveTwoBranchMate() {
-        val list = createWinList(
+        val list = createList(
             mateIndexList = listOf(3),
             mapOf(
                 0 to listOf(1),
@@ -99,7 +99,21 @@ class AppendWinIndexListTest {
             )
         )
 
-        assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList.toList()[0])
+        val expected = list.deepCopy()
+        expected[0].winIndexList.add(WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 3))
+        expected[1].winIndexList.addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2),
+                WinIndex.Forced(nextIndex = 4, pliesUntilCheckmate = 2)
+            )
+        )
+        expected[2].winIndexList.add(WinIndex.Forced(nextIndex = 4, pliesUntilCheckmate = 69))
+//        expected[3].winIndexList.add(WinIndex.Forced(nextIndex = 6, pliesUntilCheckmate = 1))
+        // TODO
+
+        appendWinIndexList(list)
+
+        assertEquals(expected, list)
     }
 
     /**
@@ -302,3 +316,6 @@ class AppendWinIndexListTest {
         winIndexList = mutableSetOf(), // Doesn't matter
     )
 }
+
+private fun List<IndexGraph>.deepCopy(): List<IndexGraph> =
+    map { it.copy(winIndexList = it.winIndexList.toMutableSet()) }
