@@ -107,9 +107,8 @@ class AppendWinIndexListTest {
                 WinIndex.Forced(nextIndex = 4, pliesUntilCheckmate = 2)
             )
         )
-        expected[2].winIndexList.add(WinIndex.Forced(nextIndex = 4, pliesUntilCheckmate = 69))
-//        expected[3].winIndexList.add(WinIndex.Forced(nextIndex = 6, pliesUntilCheckmate = 1))
-        // TODO
+        expected[2].winIndexList.add(WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 1))
+        expected[4].winIndexList.add(WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 1))
 
         appendWinIndexList(list)
 
