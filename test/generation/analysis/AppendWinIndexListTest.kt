@@ -127,6 +127,7 @@ class AppendWinIndexListTest {
             mapOf(
                 0 to listOf(1, 5),
                 1 to listOf(2),
+                3 to emptyList(),
                 2 to listOf(3),
                 5 to listOf(2, 4),
                 4 to listOf(3)
