@@ -27,7 +27,7 @@ fun appendWinIndexList(graphList: List<IndexGraph>) {
 private fun initializeWinIndexList(graphList: List<IndexGraph>) {
     graphList.forEach { graph ->
         graph.nextIndexList.forEach { nextIndex ->
-            graph.winIndexList.add(WinIndex.Unknown(nextIndex))
+            graph.winIndexList.set(WinIndex.Unknown(nextIndex))
         }
     }
 }
@@ -107,9 +107,9 @@ private fun replaceUnknownWithAvoidable(graphList: List<IndexGraph>) {
 }
 
 private fun MutableSet<WinIndex>.set(winIndex: WinIndex) {
-    val matchingIndex = indexOfFirst { it.nextIndex == winIndex.nextIndex }
+    val matchingIndex = find { it.nextIndex == winIndex.nextIndex }?.nextIndex ?: -1
     if (matchingIndex != -1) {
-        remove(toList()[matchingIndex])
+        remove(toList().find { it.nextIndex == matchingIndex }!!)
     }
     add(winIndex)
 }
