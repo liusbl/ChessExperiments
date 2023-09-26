@@ -117,6 +117,40 @@ class AppendWinIndexListTest {
 
     /**
      * 0W -> 1B -> 2W -> 3B#
+     *       5B -> 0W
+     *       5B -> 2W
+     */
+    @Test
+    fun twoMoveOneBadBranchMate() {
+        val list = createWinList(
+            mateIndexList = listOf(3),
+            mapOf(
+                0 to listOf(1),
+                1 to listOf(2),
+                2 to listOf(3),
+                3 to emptyList(),
+                5 to listOf(0, 2)
+            )
+        )
+
+        val expected = list.deepCopy()
+        expected.winIndexList(0).add(WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 3))
+        expected.winIndexList(1).add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2))
+        expected.winIndexList(2).add(WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 1))
+        expected.winIndexList(5).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 0, pliesUntilCheckmate = 4),
+                WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2)
+            )
+        )
+
+        appendWinIndexList(list)
+
+        assertEquals(expected, list)
+    }
+
+    /**
+     * 0W -> 1B -> 2W -> 3B#
      * 0W -> 5B -> 2W
      *       5B -> 4W -> 3B#
      */
@@ -154,28 +188,6 @@ class AppendWinIndexListTest {
         appendWinIndexList(list)
 
         assertEquals(expected, list)
-    }
-
-    /**
-     * 0W -> 1B -> 2W -> 3B#
-     *       5B -> 0W
-     *       5B -> 2W -> 3B#
-     */
-    @Test
-    fun twoMoveOneBadBranchMate() {
-        val list = createWinList(
-            mateIndexList = listOf(3),
-            mapOf(
-                0 to listOf(1),
-                1 to listOf(2, 4),
-                2 to listOf(3),
-                3 to emptyList(),
-                4 to listOf(3),
-                5 to listOf(0, 2)
-            )
-        )
-
-        assertEquals(WinIndex.Forced(1, 3), list[0].winIndexList.toList()[0])
     }
 
     /**
