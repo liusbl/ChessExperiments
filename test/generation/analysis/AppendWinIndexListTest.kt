@@ -122,7 +122,7 @@ class AppendWinIndexListTest {
      */
     @Test
     fun twoMoveOneBadBranchMate() {
-        val list = createWinList(
+        val list = createList(
             mateIndexList = listOf(3),
             mapOf(
                 0 to listOf(1),
@@ -196,7 +196,7 @@ class AppendWinIndexListTest {
      */
     @Test
     fun twoMoveAvoidableMate() {
-        val list = createWinList(
+        val list = createList(
             mateIndexList = listOf(3),
             mapOf(
                 0 to listOf(1),
@@ -228,7 +228,7 @@ class AppendWinIndexListTest {
      */
     @Test
     fun oneMoveMateWithOptions() {
-        val list = createWinList(
+        val list = createList(
             mateIndexList = listOf(3),
             mapOf(
                 0 to listOf(1, 3),
@@ -253,26 +253,6 @@ class AppendWinIndexListTest {
         assertEquals(expected, list)
     }
 
-//    /**
-//    TODO
-//     * 0W -> 1B -> 2W -> 3B -> 4W -> 1B
-//     *       1B -> 6W -> 5B#
-//     */
-//    @Test
-//    fun threeMoveAvoidableMate() {
-//        val list = createWinList(
-//            mateIndexList = listOf(7),
-//            listOf(1),
-//            listOf(2, 6),
-//            listOf(3),
-//            listOf(4),
-//            listOf(1),
-//            emptyList()
-//        )
-//
-//        assertEquals(WinIndex.Forced(1, 5), list[0].winIndexList.toList()[0])
-//    }
-
     /**
      * 0W -> 1B -> 2W -> 3B -> 4W -> 5B -> 6W -> 7B -> 8W -> 9B#
      * 0W -> 11B -> 10W -> 13B#  // White should avoid this branch, even though it seemingly leads to mate. It doesn't due to 9B -> 0W loop. TODO same but inverted
@@ -280,7 +260,7 @@ class AppendWinIndexListTest {
      */
     @Test
     fun quickerButShortAvoidableMateShouldBeIgnored() {
-        val list = createWinList(
+        val list = createList(
             mateIndexList = listOf(9, 13),
             nextIndexMap = mapOf(
                 0 to listOf(1, 11),
@@ -301,7 +281,34 @@ class AppendWinIndexListTest {
             )
         )
 
-        assertEquals(WinIndex.Forced(1, 9), list[0].winIndexList.toList()[0])
+        val expected = list.deepCopy()
+        expected.winIndexList(0).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 9),
+                WinIndex.Avoidable(nextIndex = 11)
+            )
+        )
+        expected.winIndexList(1).add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 8))
+        expected.winIndexList(2).add(WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 7))
+        expected.winIndexList(3).add(WinIndex.Forced(nextIndex = 4, pliesUntilCheckmate = 6))
+        expected.winIndexList(4).add(WinIndex.Forced(nextIndex = 5, pliesUntilCheckmate = 5))
+        expected.winIndexList(5).add(WinIndex.Forced(nextIndex = 6, pliesUntilCheckmate = 4))
+        expected.winIndexList(6).add(WinIndex.Forced(nextIndex = 7, pliesUntilCheckmate = 3))
+        expected.winIndexList(7).add(WinIndex.Forced(nextIndex = 8, pliesUntilCheckmate = 2))
+        expected.winIndexList(8).add(WinIndex.Forced(nextIndex = 9, pliesUntilCheckmate = 1))
+        expected.winIndexList(11).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 10, pliesUntilCheckmate = 1),
+                WinIndex.Avoidable(nextIndex = 12)
+            )
+        )
+        expected.winIndexList(10).add(WinIndex.Forced(nextIndex = 13, pliesUntilCheckmate = 1))
+        expected.winIndexList(12).add(WinIndex.Avoidable(nextIndex = 15))
+        expected.winIndexList(15).add(WinIndex.Avoidable(nextIndex = 0))
+
+        appendWinIndexList(list)
+
+        assertEquals(expected, list)
     }
 
     /**
