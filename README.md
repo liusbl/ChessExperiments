@@ -8,6 +8,7 @@ The current goal is to brute-force analyze all the possible King, King, Queen (K
 - [ ] Could you premove with a Rook to checkmate? 
 - [ ] What if it wasn't a Queen, but some more advanced piece, like an Empress, which can move like a Queen and a Knight. What would be it's premoving-to-checkmate capabilities?
   - [ ] What if it were a Queen which can teleport to any square but only capture and check in the style of a Queen? 
+- [ ] How would you need to minimally edit the board or the moves to have a number of premoves available to mate? 
 
 ## Additional curiosities:
 - [ ] [When there are more pieces] How many disconnected/unreachable board states there can be? 
