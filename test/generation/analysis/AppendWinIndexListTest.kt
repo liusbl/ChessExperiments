@@ -238,7 +238,19 @@ class AppendWinIndexListTest {
             )
         )
 
-        assertEquals(WinIndex.Forced(3, 1), list[0].winIndexList.toList()[0])
+        val expected = list.deepCopy()
+        expected.winIndexList(0).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 3),
+                WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 1)
+            )
+        )
+        expected.winIndexList(1).add(WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2))
+        expected.winIndexList(2).add(WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 1))
+
+        appendWinIndexList(list)
+
+        assertEquals(expected, list)
     }
 
 //    /**
