@@ -343,6 +343,79 @@ class AppendWinIndexListTest {
         assertEquals(WinIndex.Forced(7, 9), list[0].winIndexList.toList()[0])
     }
 
+    /**
+     * 0W -> 1B
+     * 0W -> 3B
+     * 0W -> 5B#
+     *       1B -> 0W
+     *       1B -> 2W
+     *       1B -> 4W
+     *             2W -> 1B
+     *             2W -> 3B
+     *             2W -> 5B#
+     *                   3B -> 0W
+     *                   3B -> 2W
+     *                   3B -> 4W
+     *                         4W -> 1B
+     *                         4W -> 3B
+     *                         4W -> 5B#
+     */
+    @Test
+    fun fullyConnectedGraphAvoidableMate() {
+        val list = createList(
+            mateIndexList = listOf(5),
+            mapOf(
+                0 to listOf(1, 3, 5),
+                1 to listOf(0, 2, 4),
+                2 to listOf(1, 3, 5),
+                3 to listOf(0, 2, 4),
+                4 to listOf(1, 3, 5),
+                5 to emptyList()
+            )
+        )
+
+        val expected = list.deepCopy()
+        expected.winIndexList(0).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 3),
+                WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 3),
+                WinIndex.Forced(nextIndex = 5, pliesUntilCheckmate = 1)
+            )
+        )
+        expected.winIndexList(1).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 0, pliesUntilCheckmate = 2),
+                WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2),
+                WinIndex.Forced(nextIndex = 4, pliesUntilCheckmate = 2)
+            )
+        )
+        expected.winIndexList(2).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 3),
+                WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 3),
+                WinIndex.Forced(nextIndex = 5, pliesUntilCheckmate = 1)
+            )
+        )
+        expected.winIndexList(3).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 0, pliesUntilCheckmate = 2),
+                WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2),
+                WinIndex.Forced(nextIndex = 4, pliesUntilCheckmate = 2)
+            )
+        )
+        expected.winIndexList(4).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 3),
+                WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 3),
+                WinIndex.Forced(nextIndex = 5, pliesUntilCheckmate = 1)
+            )
+        )
+
+        appendWinIndexList(list)
+
+        assertEquals(expected, list)
+    }
+
     private fun createWinList(
         mateIndexList: List<Int>,
         nextIndexMap: Map<Int, List<Int>>
