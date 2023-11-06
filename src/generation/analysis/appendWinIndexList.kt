@@ -62,20 +62,66 @@ private fun appendForcingMoves(graphList: List<IndexGraph>) {
         val nextGraphList = graph.nextIndexList.mapNotNull { nextIndex -> graphList.find { it.index == nextIndex } }
         when (graph.move) {
             Move.BLACK -> {
-                val forcedCheckmate = graph.checkState == CheckState.BLACK_IN_CHECKMATE ||
-                    nextGraphList.flatMap { it.winIndexList }.all { it is WinIndex.Forced }
-                if (forcedCheckmate) {
-                    graph.nextIndexList.forEach { nextIndex ->
-                        val nextGraph = graphList.find { it.index == nextIndex } ?: return
-                        val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
-                        graph.winIndexList.set(winIndex)
+//                val forcedCheckmate = graph.checkState == CheckState.BLACK_IN_CHECKMATE ||
+//                    nextGraphList.flatMap { it.winIndexList }.all { it is WinIndex.Forced }
+//                if (forcedCheckmate) {
+//                    graph.nextIndexList.forEach { nextIndex ->
+//                        val nextGraph = graphList.find { it.index == nextIndex } ?: return
+//                        val winIndex = WinIndex.Forced(nextIndex = nextIndex, pliesUntilCheckmate = nextGraph.minimumForcedPlies() + 1)
+//                        val find = graph.winIndexList.toList().find { it.nextIndex == winIndex.nextIndex }
+//                        val other = if (find is WinIndex.Forced) {
+//                            find.pliesUntilCheckmate > winIndex.pliesUntilCheckmate
+//                        } else {
+//                            true
+//                        }
+//                        if (find != null && other) {
+//                            graph.winIndexList.set(winIndex)
+//                        }
+//                    }
+
+                nextGraphList.forEach { nextGraph ->
+                    if (nextGraph.winIndexList.all { it is WinIndex.Forced }) {
+                        val maxPlies = nextGraph.winIndexList.filterIsInstance<WinIndex.Forced>().maxByOrNull { it.pliesUntilCheckmate }
+                        val newWinIndex = WinIndex.Forced(nextIndex = nextGraph.index, pliesUntilCheckmate = (maxPlies?.pliesUntilCheckmate ?: 0) + 1)
+
+//                        val find = graph.winIndexList.toList().find { it.nextIndex == newWinIndex.nextIndex }
+//                        val other = if (find is WinIndex.Forced) {
+//                            find.pliesUntilCheckmate > newWinIndex.pliesUntilCheckmate
+//                        } else {
+//                            true
+//                        }
+//                        if (find != null && other) {
+//                            graph.winIndexList.set(newWinIndex)
+//                        }
+
+                        graph.winIndexList.set(newWinIndex)
                     }
+//                    nextGraph.winIndexList.filterIsInstance<WinIndex.Forced>().forEach { winIndex ->
+//                        val newWinIndex = WinIndex.Forced(nextIndex = nextGraph.index, pliesUntilCheckmate = winIndex.pliesUntilCheckmate + 1)
+//                        graph.winIndexList.set(newWinIndex)
+//                    }
                 }
             }
             Move.WHITE -> {
                 nextGraphList.forEach { nextGraph ->
-                    nextGraph.winIndexList.filterIsInstance<WinIndex.Forced>().forEach { winIndex ->
-                        val newWinIndex = WinIndex.Forced(nextIndex = nextGraph.index, pliesUntilCheckmate = winIndex.pliesUntilCheckmate + 1)
+//                    nextGraph.winIndexList.filterIsInstance<WinIndex.Forced>().forEach { winIndex ->
+//                        val newWinIndex = WinIndex.Forced(nextIndex = nextGraph.index, pliesUntilCheckmate = winIndex.pliesUntilCheckmate + 1)
+//                        graph.winIndexList.set(newWinIndex)
+//                    }
+                    if (nextGraph.winIndexList.all { it is WinIndex.Forced }) {
+                        val maxPlies = nextGraph.winIndexList.filterIsInstance<WinIndex.Forced>().maxByOrNull { it.pliesUntilCheckmate }
+                        val newWinIndex = WinIndex.Forced(nextIndex = nextGraph.index, pliesUntilCheckmate = (maxPlies?.pliesUntilCheckmate ?: 0) + 1)
+
+//                        val find = graph.winIndexList.toList().find { it.nextIndex == newWinIndex.nextIndex }
+//                        val other = if (find is WinIndex.Forced) {
+//                            find.pliesUntilCheckmate > newWinIndex.pliesUntilCheckmate
+//                        } else {
+//                            true
+//                        }
+//                        if (find != null && other) {
+//                            graph.winIndexList.set(newWinIndex)
+//                        }
+
                         graph.winIndexList.set(newWinIndex)
                     }
                 }
