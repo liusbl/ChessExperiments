@@ -45,7 +45,10 @@ private fun appendImmediateCheckmate(graphList: List<IndexGraph>) {
 
 private fun calculateMoves(graphList: List<IndexGraph>) {
     var lastWinIndexList = graphList.map { it.winIndexList.toList() }
+    var count = 0
     while (true) {
+        if (count++ > 100) break
+        println("TESTING last graph list: $graphList")
         appendForcingMoves(graphList)
 
         val newWinIndexList = graphList.map { it.winIndexList.toList() }
@@ -55,6 +58,7 @@ private fun calculateMoves(graphList: List<IndexGraph>) {
             lastWinIndexList = newWinIndexList
         }
     }
+    println("TESTING final list: $graphList")
 }
 
 private fun appendForcingMoves(graphList: List<IndexGraph>) {
@@ -103,6 +107,24 @@ private fun appendForcingMoves(graphList: List<IndexGraph>) {
                 }
             }
             Move.WHITE -> {
+                // TODO examine this option:
+//                nextGraphList.forEach { nextGraph ->
+//                    nextGraph.winIndexList.filterIsInstance<WinIndex.Forced>().forEach { winIndex ->
+//                        val newWinIndex = WinIndex.Forced(nextIndex = nextGraph.index, pliesUntilCheckmate = winIndex.pliesUntilCheckmate + 1)
+//                        val found = graph.winIndexList.find { it.nextIndex == newWinIndex.nextIndex}
+//                        if (found is WinIndex.Forced) {
+//                            if (winIndex.pliesUntilCheckmate > found.pliesUntilCheckmate) {
+//                                 Do nothing
+//                            } else {
+//                                graph.winIndexList.set(newWinIndex)
+//                            }
+//                        } else {
+//                            graph.winIndexList.set(newWinIndex)
+//                        }
+//                    }
+//                }
+
+
                 nextGraphList.forEach { nextGraph ->
 //                    nextGraph.winIndexList.filterIsInstance<WinIndex.Forced>().forEach { winIndex ->
 //                        val newWinIndex = WinIndex.Forced(nextIndex = nextGraph.index, pliesUntilCheckmate = winIndex.pliesUntilCheckmate + 1)
