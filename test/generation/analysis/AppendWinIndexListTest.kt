@@ -211,7 +211,7 @@ class AppendWinIndexListTest {
         expected.winIndexList(1).addAll(
             listOf(
                 WinIndex.Avoidable(nextIndex = 0),
-                WinIndex.Avoidable(nextIndex = 2)
+                WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2)
             )
         )
         expected.winIndexList(2).add(WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 1))
@@ -298,7 +298,7 @@ class AppendWinIndexListTest {
         expected.winIndexList(8).add(WinIndex.Forced(nextIndex = 9, pliesUntilCheckmate = 1))
         expected.winIndexList(11).addAll(
             listOf(
-                WinIndex.Forced(nextIndex = 10, pliesUntilCheckmate = 1),
+                WinIndex.Forced(nextIndex = 10, pliesUntilCheckmate = 2),
                 WinIndex.Avoidable(nextIndex = 12)
             )
         )
