@@ -386,6 +386,51 @@ class AppendWinIndexListTest {
 
     /**
      * 0W -> 1B
+     * 0W -> 3B#
+     *       1B -> 0W
+     *       1B -> 2W
+     *             2W -> 1B
+     *             2W -> 3B#
+     */
+    @Test
+    fun smallFullyConnectedGraphForcedMate() {
+        val list = createList(
+            mateIndexList = listOf(3),
+            mapOf(
+                0 to listOf(1, 3),
+                1 to listOf(0, 2),
+                2 to listOf(1, 3),
+                3 to emptyList(),
+            )
+        )
+
+        val expected = list.deepCopy()
+        expected.winIndexList(0).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 3),
+                WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 1)
+            )
+        )
+        expected.winIndexList(1).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 0, pliesUntilCheckmate = 2),
+                WinIndex.Forced(nextIndex = 2, pliesUntilCheckmate = 2)
+            )
+        )
+        expected.winIndexList(2).addAll(
+            listOf(
+                WinIndex.Forced(nextIndex = 1, pliesUntilCheckmate = 3),
+                WinIndex.Forced(nextIndex = 3, pliesUntilCheckmate = 1)
+            )
+        )
+
+        appendWinIndexList(list)
+
+        assertEquals(expected, list)
+    }
+
+    /**
+     * 0W -> 1B
      * 0W -> 3B
      * 0W -> 5B#
      *       1B -> 0W
